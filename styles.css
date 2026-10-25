@@ -221,6 +221,7 @@ body > footer .footer-inner p:last-child {
 .team-group-image {
   display: block;
   width: 50%;
+  max-width: 560px;
   height: auto;
   margin: 8px auto 28px;
   border-radius: 18px;
