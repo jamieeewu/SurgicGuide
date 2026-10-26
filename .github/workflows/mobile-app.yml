@@ -23,4 +23,5 @@ jobs:
           node-version: "20.19.4"
       - run: npm install
       - run: npx expo-doctor
-      - run: npx expo export --platform android --output-dir dist
+      - run: npx expo export --platform android --output-dir dist/android
+      - run: npx expo export --platform ios --output-dir dist/ios
