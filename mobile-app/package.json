@@ -11,7 +11,10 @@
     "web": "expo start --web",
     "doctor": "npx expo-doctor",
     "build:ios": "eas build --platform ios --profile production",
-    "build:android": "eas build --platform android --profile production"
+    "build:android": "eas build --platform android --profile production",
+    "export:android": "expo export --platform android --output-dir dist/android",
+    "export:ios": "expo export --platform ios --output-dir dist/ios",
+    "validate": "npm run doctor && npm run export:android && npm run export:ios"
   },
   "dependencies": {
     "expo": "~54.0.0",
