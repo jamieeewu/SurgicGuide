@@ -479,3 +479,15 @@ html.figure-open { overflow: hidden; }
 @media (max-width: 600px) { .reference-list { padding-left: 23px; } .reference-list > li { padding: 20px 0 20px 10px; font-size: 14px; } }
 /* Remove the white canvas margins in the supplied partner sheets, without cropping logos. */
 .partner-sheet img { aspect-ratio: 1.6; object-fit: cover; object-position: center; }
+/* Product contents navigation: readable labels at every viewport size. */
+.page-product .article-nav .eyebrow { font-size: 12px; }
+.page-product .article-nav nav a { font-size: 15px; line-height: 1.6; padding-block: 10px; color: #38545b; }
+.page-product .article-nav nav a > span { font-size: 12px; flex-basis: 20px; }
+.page-product .article-nav nav a.toc-sub { font-size: 14px; }
+.page-product .article-download { font-size: 14px; }
+@media (min-width: 861px) {
+  .page-product .article-layout { grid-template-columns: 240px minmax(0, 780px); }
+}
+@media (max-width: 860px) {
+  .page-product .article-nav nav a { font-size: 16px; padding-block: 8px; }
+}
