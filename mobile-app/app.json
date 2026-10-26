@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "SurgicGuide",
+    "slug": "surgicguide",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.surgicguide.app"
+    },
+    "android": {
+      "package": "com.surgicguide.app"
+    }
+  }
+}
