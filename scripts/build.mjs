@@ -5,6 +5,8 @@ import { createHash } from 'node:crypto';
 const root = path.resolve(import.meta.dirname, '..');
 const assetVersion = createHash('sha256').update(fs.readFileSync(path.join(root, 'styles.css'))).update(fs.readFileSync(path.join(root, 'site.js'))).digest('hex').slice(0, 10);
 const site = JSON.parse(fs.readFileSync(path.join(root, 'content/site.json'), 'utf8'));
+const seo = JSON.parse(fs.readFileSync(path.join(root, 'content/seo.json'), 'utf8'));
+const publicPages = [];
 const media = JSON.parse(fs.readFileSync(path.join(root, 'content/media.json'), 'utf8'));
 const esc = (s = '') => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
 const plain = html => html.replace(/<[^>]*>/g, '').replace(/&nbsp;|[\u00a0\u200b\u200c\ufeff]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -162,18 +164,75 @@ function post(p) {
 function figureDialog() {
   return `<dialog id="figure-dialog" aria-labelledby="figure-dialog-title"><div class="figure-dialog-toolbar"><p id="figure-dialog-title">Scientific figure</p><button type="button" class="dialog-close" aria-label="Close enlarged figure">✕</button></div><div class="figure-dialog-image"><img alt=""></div><div class="figure-dialog-footer"><p id="figure-dialog-caption"></p><a target="_blank" rel="noopener" id="figure-original">Open original image ↗︎</a></div></dialog>`;
 }
-function document(title, content, current, depth=0, description='') {
+function seoMetadata(file, current, fallbackTitle) {
+  const article = file.startsWith('post/') ? site.posts.find(p => file === `post/${p.slug}.html`) : null;
+  const settings = seo.pages[current] || {};
+  const url = new URL(file === 'index.html' ? '/' : '/' + file, seo.siteUrl).href;
+  const absolute = value => new URL(value, seo.siteUrl + '/').href;
+  const imagePath = article?.image || settings.image || seo.defaultImage;
+  const title = article ? `${article.title} | SurgicGuide Journal` : settings.title || `${fallbackTitle} | SurgicGuide`;
+  const articleCopy = article ? plain(article.html).replace(/\s+/g, ' ').trim() : '';
+  const description = article
+    ? `Academic project: ${articleCopy.slice(0, 138).replace(/\s+\S*$/, '').replace(/[.,;:]$/, '')}…`
+    : settings.description || seo.siteDescription;
+  const breadcrumbs = [{name:'Home', url:seo.siteUrl + '/'}];
+  if (article) breadcrumbs.push({name:'Journal', url:absolute('blog.html')}, {name:article.title, url});
+  else if (current !== 'home') breadcrumbs.push({name:settings.label || fallbackTitle, url});
+  const website = {
+    '@type':'WebSite', '@id':seo.siteUrl + '/#website', url:seo.siteUrl + '/',
+    name:seo.siteName, description:seo.siteDescription, inLanguage:seo.language
+  };
+  const graph = [website, {
+    '@type':current === 'contact' ? 'ContactPage' : current === 'team' ? 'AboutPage' : current === 'blog' ? 'CollectionPage' : 'WebPage',
+    '@id':url + '#webpage', url, name:title, description, inLanguage:seo.language,
+    isPartOf:{'@id':website['@id']}, isAccessibleForFree:true,
+    primaryImageOfPage:{'@type':'ImageObject', url:absolute(imagePath)}
+  }];
+  if (breadcrumbs.length > 1) graph.push({
+    '@type':'BreadcrumbList', '@id':url + '#breadcrumbs',
+    itemListElement:breadcrumbs.map((b,i) => ({'@type':'ListItem', position:i+1, name:b.name, item:b.url}))
+  });
+  if (article) graph.push({
+    '@type':'BlogPosting', '@id':url + '#article', mainEntityOfPage:{'@id':url + '#webpage'},
+    headline:article.title, description, image:[absolute(imagePath)], datePublished:article.date,
+    inLanguage:seo.language, isAccessibleForFree:true, genre:'Educational',
+    creativeWorkStatus:'Academic and illustrative content about a hypothetical company',
+    isPartOf:{'@id':website['@id']}
+  });
+  return {title, description, url, image:absolute(imagePath), imageAlt:article?.title || 'SurgicGuide academic project',
+    imageDimensions:media[imagePath] || {width:1200,height:630}, sitemapImage:imagePath === seo.defaultImage ? null : absolute(imagePath), article,
+    structured:JSON.stringify({'@context':'https://schema.org','@graph':graph}).replace(/</g, '\\u003c')};
+}
+function document(title, content, current, file) {
+  const depth=file.split('/').length-1;
   const prefix='../'.repeat(depth);
+  const meta=seoMetadata(file,current,title);
+  const indexable=current !== '404';
+  const head = `<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="${indexable ? 'index,follow,max-image-preview:large' : 'noindex,follow'}">
+<meta name="theme-color" content="#102b35"><title>${esc(meta.title)}</title>
+<meta name="description" content="${esc(meta.description)}"><link rel="canonical" href="${meta.url}">
+<link rel="icon" href="assets/surgicguide-logo-header.png"><link rel="preload" href="assets/media/pxiEyp8kv8JHgFVrJJfecnFHGPc.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="styles.css?v=${assetVersion}">
+<link rel="sitemap" type="application/xml" href="${seo.siteUrl}/sitemap.xml" title="Sitemap">
+<meta property="og:type" content="${meta.article ? 'article' : 'website'}"><meta property="og:site_name" content="${esc(seo.siteName)}"><meta property="og:locale" content="en_GB">
+<meta property="og:title" content="${esc(meta.title)}"><meta property="og:description" content="${esc(meta.description)}"><meta property="og:url" content="${meta.url}">
+<meta property="og:image" content="${meta.image}"><meta property="og:image:alt" content="${esc(meta.imageAlt)}"><meta property="og:image:width" content="${meta.imageDimensions.width}"><meta property="og:image:height" content="${meta.imageDimensions.height}">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(meta.title)}"><meta name="twitter:description" content="${esc(meta.description)}"><meta name="twitter:image" content="${meta.image}"><meta name="twitter:image:alt" content="${esc(meta.imageAlt)}">
+${meta.article ? `<meta property="article:published_time" content="${meta.article.date}">` : ''}
+${indexable ? `<script type="application/ld+json">${meta.structured}</script>` : ''}
+<script defer src="site.js?v=${assetVersion}"></script>`;
   let html=`<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive"><meta name="theme-color" content="#102b35"><title>${esc(title)} | SurgicGuide Ltd</title><meta name="description" content="${esc(description || 'Exploring AI-integrated fluorescence lifetime imaging for precision cancer surgery. An academic and illustrative project.')}"><link rel="icon" href="assets/surgicguide-logo-header.png"><link rel="preload" href="assets/media/pxiEyp8kv8JHgFVrJJfecnFHGPc.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="styles.css?v=${assetVersion}"><meta property="og:title" content="${esc(title)} | SurgicGuide Ltd"><meta property="og:description" content="An academic project exploring AI-integrated fluorescence lifetime imaging for precision cancer surgery."><meta property="og:image" content="https://test.surgicguide.com/assets/surgicguide-social-preview-v2.png"><script defer src="site.js?v=${assetVersion}"></script></head>
+<html lang="${seo.language}"><head>${head}</head>
 <body class="page-${current}"><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="container header-inner"><a href="index.html" class="brand" aria-label="SurgicGuide Ltd home">${site.logo}<span>SurgicGuide<span class="brand-subtitle">Precision through insight</span></span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="header-navigation">Menu <span aria-hidden="true">☰</span></button><div id="header-navigation">${nav(current)}</div></div></header><main id="main">${content}</main>${footer(current)}${figureDialog()}</body></html>`;
   html = html.replace(/↗\uFE0E*/g, '<svg class="icon-arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 12 12 4M4 4h8v8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-  if (depth) html=html.replace(/(href|src)="(?!https?:|mailto:|tel:|#|data:)([^"]+)"/g,(_,attr,url)=>`${attr}="${prefix}${url}"`);
+  if (depth) html=html.replace(/(href|src)="(?!https?:|mailto:|tel:|#|data:)([^\"]+)"/g,(_,attr,url)=>`${attr}="${prefix}${url}"`);
   return html;
 }
-function write(file,title,content,current,desc) {
+function write(file,title,content,current) {
   const dest=path.join(root,file); fs.mkdirSync(path.dirname(dest),{recursive:true});
-  fs.writeFileSync(dest,document(title,content,current,file.split('/').length-1,desc));
+  fs.writeFileSync(dest,document(title,content,current,file));
+  if (current !== '404') publicPages.push(seoMetadata(file,current,title));
 }
 write('index.html','Real-Time Surgical Guidance with FLIM and AI',home(),'home');
 for(const p of ['product','specialist','nonspecialist']) write(p+'.html',p==='product'?'AI-integrated FLIM System':p==='specialist'?'Science for Specialists':'Science for Non-specialists',technical(p),p);
@@ -181,13 +240,19 @@ write('team.html','Our Team',team(),'team');
 write('contact.html','Contact us',contact(),'contact');
 write('references.html','References',references(),'references');
 write('blog.html','Blog',blog(),'blog');
-for(const p of site.posts) write('post/'+p.slug+'.html',p.title,post(p),'blog',p.excerpt);
+for(const p of site.posts) write('post/'+p.slug+'.html',p.title,post(p),'blog');
 function redirect(file, title, url) {
   const dest=path.join(root,file); fs.mkdirSync(path.dirname(dest),{recursive:true});
-  fs.writeFileSync(dest,`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url=${url}"><title>${esc(title)}</title></head><body><a href="${url}">Continue to ${esc(title)}</a></body></html>`);
+  fs.writeFileSync(dest,`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex,follow"><link rel="canonical" href="${new URL(url, new URL(file, seo.siteUrl + '/')).href}"><meta http-equiv="refresh" content="0;url=${url}"><title>${esc(title)}</title></head><body><a href="${url}">Continue to ${esc(title)}</a></body></html>`);
 }
 for(const [alias,target] of Object.entries({product:'product',specialist:'specialist',nonspecialist:'nonspecialist',team:'team',contact:'contact',reference:'references',references:'references',blog:'blog'})) redirect(alias+'/index.html','SurgicGuide','../'+target+'.html');
 for(const p of site.posts) redirect('post/'+p.slug+'/index.html',p.title,'../'+p.slug+'.html');
 fs.writeFileSync(path.join(root,'.nojekyll'),'');
 write('404.html','Page not found',`<section class="not-found container"><p class="eyebrow">404 / Page not found</p><h1>A different direction.</h1><p>This page may have moved. Explore the site from the homepage.</p>${button('Back to Home','index.html')}</section>`,'404');
-console.log('Built 20 public pages, compatibility redirects and 404 page.');
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${publicPages.map(p => `  <url><loc>${esc(p.url)}</loc>${p.sitemapImage ? `<image:image><image:loc>${esc(p.sitemapImage)}</image:loc></image:image>` : ''}</url>`).join('\n')}
+</urlset>\n`;
+fs.writeFileSync(path.join(root,'sitemap.xml'),sitemap);
+fs.writeFileSync(path.join(root,'robots.txt'),`User-agent: *\nAllow: /\nDisallow: /content/\nDisallow: /scripts/\nDisallow: /mobile-app/\n\nSitemap: ${seo.siteUrl}/sitemap.xml\n`);
+console.log('Built 20 indexable public pages, canonical redirects, sitemap and 404 page.');

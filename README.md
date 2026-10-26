@@ -13,6 +13,7 @@ SurgicGuide Limited and its proposed system are hypothetical. The educational an
 - Styles: `styles.css`
 - Interactions: `site.js`
 - Image dimensions: `content/media.json`
+- Search metadata and canonical domain: `content/seo.json`
 - Mobile application: `mobile-app/`
 
 Generate pages and validate local links:
@@ -44,7 +45,9 @@ The enquiry form validates required fields and opens a draft addressed to `enqui
 
 GitHub Pages serves the repository's `main` branch from the root folder. The current custom domain is `test.surgicguide.com`, configured in `CNAME`.
 
-The test site is excluded from search indexing. When configuring a production domain, update `CNAME` and social-preview URLs, remove the indexing restrictions in the page templates and `robots.txt`, then rebuild.
+The public pages are open to search indexing. `content/seo.json` defines the canonical domain, page titles, descriptions and preview images. The build generates `sitemap.xml`, `robots.txt`, social metadata and structured data. Redirect pages and the 404 page remain excluded from indexing.
+
+When changing domains, update `CNAME` and `content/seo.json`, then rebuild. See `SEO.md` for search-engine verification and sitemap submission.
 
 ## Browser checks
 

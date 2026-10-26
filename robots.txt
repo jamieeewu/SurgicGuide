@@ -1,2 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /content/
+Disallow: /scripts/
+Disallow: /mobile-app/
+
+Sitemap: https://test.surgicguide.com/sitemap.xml

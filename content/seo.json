@@ -1,0 +1,53 @@
+{
+  "siteUrl": "https://test.surgicguide.com",
+  "siteName": "SurgicGuide",
+  "language": "en-GB",
+  "defaultImage": "assets/surgicguide-social-preview-v2.png",
+  "siteDescription": "An academic project exploring fluorescence lifetime imaging microscopy (FLIM), cellular metabolism and AI-assisted surgical imaging.",
+  "pages": {
+    "home": {
+      "title": "SurgicGuide | FLIM & AI Surgical Imaging",
+      "description": "Explore fluorescence lifetime imaging (FLIM), cancer metabolism and AI-assisted surgical imaging through the SurgicGuide academic project.",
+      "label": "Home",
+      "image": "assets/media/cfabba_91066f8716a7450697222fa7782c362f~mv2.webp"
+    },
+    "product": {
+      "title": "AI-Integrated FLIM System: Concept & Design | SurgicGuide",
+      "description": "Explore a proposed AI-integrated FLIM system: imaging principles, hardware, photon timing and tumour delineation. A hypothetical academic concept.",
+      "label": "FLIM System",
+      "image": "assets/media/cfabba_8bf491479b1f41ceb7d92f4efa1c6550~mv2.webp"
+    },
+    "specialist": {
+      "title": "FLIM, NAD(P)H & Cancer Metabolism | SurgicGuide",
+      "description": "Explore NAD(P)H fluorescence, the Warburg effect and fluorescence lifetime imaging for cancer research, with scientific references. An academic resource.",
+      "label": "Science for Specialists",
+      "image": "assets/media/cfabba_ad44d9013f5f410fb067943c5ddf5508~mv2.webp"
+    },
+    "nonspecialist": {
+      "title": "What Is FLIM? Fluorescence & NAD(P)H Explained | SurgicGuide",
+      "description": "Learn how fluorescence lifetime imaging (FLIM) works, what NADH and NADPH do, and why cellular metabolism matters. An accessible academic guide.",
+      "label": "Science for Non-specialists",
+      "image": "assets/media/cfabba_d8d7bf3e462f4ab6807ec25ced61b101~mv2.webp"
+    },
+    "team": {
+      "title": "Our Team & Disciplines | SurgicGuide Academic Project",
+      "description": "Meet the illustrative SurgicGuide team and explore the biochemistry, biomedical engineering and surgical disciplines behind this academic project.",
+      "label": "Our Team"
+    },
+    "contact": {
+      "title": "Contact | SurgicGuide Academic Project",
+      "description": "Find contact details and an email enquiry form for the SurgicGuide academic project, which explores FLIM and AI-assisted surgical imaging.",
+      "label": "Contact"
+    },
+    "references": {
+      "title": "FLIM & Cancer Metabolism: Scientific References | SurgicGuide",
+      "description": "Browse 28 scientific references on fluorescence lifetime imaging, NAD(P)H, cancer metabolism and image-guided surgery, plus illustration credits.",
+      "label": "References"
+    },
+    "blog": {
+      "title": "FLIM Articles & Biotech Perspectives | SurgicGuide Journal",
+      "description": "Read FLIM explainers, biotech perspectives and fictional company stories from SurgicGuide, an academic project on AI-assisted surgical imaging.",
+      "label": "Journal"
+    }
+  }
+}
