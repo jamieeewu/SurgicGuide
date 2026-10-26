@@ -1,0 +1,62 @@
+import fs from 'node:fs';
+import path from 'node:path';
+const root=path.resolve(import.meta.dirname,'..');
+const site=JSON.parse(fs.readFileSync(path.join(root,'content/site.json'),'utf8'));
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pages=[['Home','index.html'],['Blog','blog.html'],['Product','product.html'],['Team','team.html'],['Contact','contact.html'],['References','references.html']];
+function nav(current,footer=false){return `<nav aria-label="${footer?'Footer':'Main'} navigation" class="nav-links">${pages.map(([label,url],i)=>`${i===2?`<details class="science-menu"><summary${['specialist','nonspecialist'].includes(current)?' class="active"':''}>Science</summary><div><a href="specialist.html">Specialist</a><a href="nonspecialist.html">Non-specialist</a></div></details>`:''}<a href="${url}" ${url===(current==='home'?'index':current)+'.html'?'aria-current="page"':''}>${label}</a>`).join('')}</nav>`}
+const button=(label,url)=>`<a class="button" href="${url}">${label}</a>`;
+const rich=(page,id)=>site[page].rich[id]||'';
+const image=(im,cls='')=>`<img class="${cls}" src="${im.src}" alt="${esc(im.alt==='image.png'?'Scientific figure':im.alt)}" loading="lazy" decoding="async">`;
+const bg=(im)=>`style="--background:url('${im.src}')"`;
+function hero(page,title,subtitle=''){const d=site[page];return `<section class="page-hero ${page}-hero" ${bg(d.images[0])}>${d.video?`<video autoplay muted loop playsinline preload="metadata" poster="${d.images[0].src}" aria-hidden="true"><source src="${d.video}" type="video/mp4"></video>`:''}<div class="hero-panel"><h1>${title}</h1>${subtitle}</div></section>`}
+function postCards(posts,home=false){return `<div class="${home?'news-grid':'blog-grid'}">${posts.map(p=>`<article class="${home?'news-card':'post-card'}"><a href="post/${p.slug}.html">${p.image?`<img src="${p.image}" alt="${esc(p.title)}" loading="lazy">`:''}<div class="post-card-copy">${home?'':`<p class="post-meta">${esc(p.date.slice(0,10))} · ${esc(p.author)}</p>`}<h2>${esc(p.title)}</h2>${home?'':`<p>${esc(p.excerpt)}</p><span class="read-more">Read more →</span>`}</div></a></article>`).join('')}</div>`}
+function home(){let d=site.home;return `<section class="home-hero" ${bg(d.images[0])}><a href="product.html"><h1>Real-Time Surgical Guidance<br>with AI-integrated FLIM System</h1></a></section>
+<section class="split-section about"><div class="split-copy"><h2>About Us</h2><div class="split-body">${rich('home','comp-mjk1dkp9')}${button('Our Team','team.html')}</div></div>${image(d.images[1])}</section>
+<section class="split-section vision">${image(d.images[2])}<div class="split-copy"><h2>Our Vision</h2><div class="split-body">${rich('home','comp-mjst9e7t')}</div></div></section>
+<section class="news" ${bg(d.images[3])}><div class="news-inner"><h2>News</h2>${postCards(site.posts.slice(0,3),true)}${button('See all ❯','blog.html')}</div></section>
+<section class="science-callout"><h2>Our Science</h2>${rich('home','comp-mjk2z9kk2')}<div class="button-row">${button('For Specialists','specialist.html')}${button('For Non-specialists','nonspecialist.html')}</div></section>
+<section class="product-callout" ${bg(d.images.at(-1))}><div><h2>Our Product</h2>${rich('home','comp-mjsuwao06')}${button('Find out more','product.html')}</div></section>`}
+// Keep the source's scientific wording, citations, emphasis and figures verbatim.
+function technical(page){const d=site[page];let blocks=d.blocks.slice();blocks.shift();const title=blocks.shift().text;let subtitle='';if(page==='specialist')subtitle=`<p class="subtitle">${esc(blocks.shift().text)}</p>`;let output='';
+for(let i=0;i<blocks.length;i++){
+ let b=blocks[i];
+ if(b.type==='image'){
+  let group=[b];while(blocks[i+1]?.type==='image')group.push(blocks[++i]);
+  // The product operation diagram already includes its heading; preserve it as an image.
+  output+=`<figure class="figure ${group.length>1?'figure-row':''}">${group.map(im=>image(im)).join('')}</figure>`;continue;
+ }
+ if(b.text==='cavity')continue; // This label is already present in the clinical figure.
+ if(/^\d$/.test(b.text)&&blocks[i+1]?.type==='text'){
+  let copy=blocks[++i];output+=`<div class="process-step"><span class="step-number">${b.text}</span><div class="step-copy">${copy.html}</div></div>`;continue;
+ }
+ let cls=/^(Figure:|Image source:|Acknowledgement|\*Details)/.test(b.text)?'caption':/<h[1-6]/.test(b.html)?'section-heading':'';
+ if(b.id==='comp-mjsc4hkk') cls+=' video-caption';
+ output+=`<div class="rich ${cls}" id="${b.id}">${b.html}</div>`;
+}
+return hero(page,esc(title),subtitle)+`<article class="technical-content ${page}-content">${output}</article>`;}
+function team(){let d=site.team;let people=[];let blocks=d.blocks.slice(3);for(let i=0;i<blocks.length;i++){let b=blocks[i];if(b.type==='image'&&blocks[i+1]?.type==='text'&&blocks[i+2]?.type==='text'){people.push({image:b,name:blocks[i+1].text,role:blocks[i+2].text});i+=2;}}
+return hero('team','Our Team',rich('team','comp-mjjtxkg61'))+`<section class="team-section"><div class="team-grid">${people.map(p=>`<article class="person">${image(p.image)}<h2>${esc(p.name)}</h2><p>${esc(p.role)}</p></article>`).join('')}</div>${button('Contact us','contact.html')}</section><section class="partners"><h2>Our Partners</h2><div class="partner-carousel" aria-roledescription="carousel"><button type="button" data-slide="-1" aria-label="Previous partners">❮</button><div class="partner-slides">${d.images.slice(-2).map((im,i)=>image(im,`partner-slide${i?' hidden':''}`)).join('')}</div><button type="button" data-slide="1" aria-label="Next partners">❯</button></div></section>`}
+function contact(){const d=site.contact;return `<section class="contact-section" ${bg(d.images[0])}>${d.video?`<video autoplay muted loop playsinline preload="metadata" poster="${d.images[0].src}" aria-hidden="true"><source src="${d.video}" type="video/mp4"></video>`:''}<div class="contact-panel"><div class="contact-info"><h1>Contact us</h1>${rich('contact','comp-mjjvnpuw1')}<h2>Phone</h2><a href="tel:+85231552120">+852 3155 2120</a><h2>Email</h2><a href="mailto:enquiry@surgicguide.com">enquiry@surgicguide.com</a><h2>Social Media</h2>${social()}</div><form id="contact-form"><div class="form-row"><label>First Name<input name="firstName" autocomplete="given-name" required></label><label>Last Name<input name="lastName" autocomplete="family-name" required></label></div><label>Email<input name="email" type="email" autocomplete="email" required></label><label>Message<textarea name="message" rows="6" required></textarea></label><p class="form-note">Opens a draft in your email app. Review and send it to complete your enquiry.</p><button type="submit" class="button">Email enquiry</button><p id="form-status" role="status"></p></form></div></section><section class="office"><div class="office-copy"><h2>Our Office</h2>${rich('contact','comp-mjjvnpvl2')}<h3>Address</h3>${rich('contact','comp-mjjvnpvl8')}<h3>Opening Hours</h3><dl><dt>Mon - Fri</dt><dd>9:00 am – 5:00 pm</dd><dt>Saturday</dt><dd>Closed</dd><dt>Sunday</dt><dd>Closed</dd></dl></div>${image(d.images.at(-1))}</section>`}
+function social(){return `<div class="social">${site.contact.images.slice(1,4).map(im=>`<a href="http://www.linkedin.com/in/jamie-wu-975118244" target="_blank" rel="noopener noreferrer" aria-label="${esc(im.alt)}"><img src="${im.src}" alt="${esc(im.alt)}" width="25" height="25"></a>`).join('')}</div>`}
+function footer(current){return `<footer class="site-footer">${nav(current,true)}${social()}<div class="footer-copy">${site.footer.join('\n')}</div></footer>`}
+function document(title,content,current,depth=0,description=''){const prefix='../'.repeat(depth);let html=`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive"><title>${esc(title)} | SurgicGuide Ltd</title><meta name="description" content="${esc(description||'SurgicGuide — real-time surgical guidance with AI-integrated FLIM. An academic and illustrative project.')} "><link rel="icon" href="assets/surgicguide-logo-header.png"><link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="styles.css"><meta property="og:title" content="${esc(title)} | SurgicGuide Ltd"><meta property="og:description" content="An academic project exploring AI-integrated fluorescence lifetime imaging for precision cancer surgery."><meta property="og:image" content="https://test.surgicguide.com/assets/surgicguide-social-preview-v2.png"><script defer src="site.js"></script></head><body class="page-${current}"><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><a href="index.html" class="brand" aria-label="SurgicGuide Ltd home">${site.logo}<span>SurgicGuide Ltd</span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="header-navigation">Menu ☰</button><div id="header-navigation">${nav(current)}</div></header><main id="main">${content}</main>${footer(current)}</body></html>`;
+if(depth) html=html.replace(/(href|src)="(?!https?:|mailto:|tel:|#|data:)([^"]+)"/g,(_,attr,url)=>`${attr}="${prefix}${url}"`).replace(/url\('(assets\/[^']+)'\)/g,(_,url)=>`url('${prefix}${url}')`);
+return html;}
+function write(file,title,content,current,desc){const dest=path.join(root,file);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,document(title,content,current,file.split('/').length-1,desc));}
+write('index.html','Real-Time Surgical Guidance with FLIM and AI',home(),'home');
+for(const p of ['product','specialist','nonspecialist'])write(p+'.html',p==='product'?'AI-integrated FLIM System':p==='specialist'?'Science for Specialists':'Science for Non-specialists',technical(p),p);
+write('team.html','Our Team',team(),'team');write('contact.html','Contact us',contact(),'contact');
+write('references.html','References',`<article class="references-content"><h1>References</h1>${rich('reference','comp-mjjvqx1e4')}</article>`,'references');
+const cats=[...new Set(site.posts.map(p=>/insights/i.test(p.title)?'Industry insights':/flim|imaging/i.test(p.title)?'Science & technology':/surgicguide-announces|fda|lecture/i.test(p.slug)?'Company news':'Life at SurgicGuide'))];
+write('blog.html','Blog',`<section class="blog-content"><div class="blog-toolbar"><h1>Blog</h1><label>Search articles<input type="search" id="blog-search" placeholder="Search articles…"></label></div><p id="blog-results" role="status" class="visually-hidden"></p>${postCards(site.posts)}<p id="no-results" hidden>No articles match your search.</p></section>`,'blog');
+for(const p of site.posts)write('post/'+p.slug+'.html',p.title,`<article class="post-content"><a href="blog.html" class="back-link">← All Posts</a><h1>${esc(p.title)}</h1><p class="post-meta">${esc(p.author)}${p.date?' · '+esc(p.date.slice(0,10)):''}</p><div class="post-body">${p.html}</div><hr><p>${button('See all posts','blog.html')}</p></article>`,'blog',p.excerpt);
+// Preserve both the existing GitHub URLs and links people saved from Wix.
+for(const [alias,target] of Object.entries({product:'product',specialist:'specialist',nonspecialist:'nonspecialist',team:'team',contact:'contact',reference:'references',references:'references',blog:'blog'})){
+ const dir=path.join(root,alias);fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,'index.html'),`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url=../${target}.html"><title>SurgicGuide</title></head><body><a href="../${target}.html">Continue to ${target}</a></body></html>`);
+}
+// Extensionless article URLs work on GitHub Pages as well.
+for(const p of site.posts){let dir=path.join(root,'post',p.slug);fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,'index.html'),`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url=../${p.slug}.html"><title>${esc(p.title)}</title></head><body><a href="../${p.slug}.html">Read article</a></body></html>`);}
+fs.writeFileSync(path.join(root,'.nojekyll'),'');
+write('404.html','Page not found',`<section class="not-found"><h1>Page not found</h1><p>The page may have moved.</p>${button('Go to Home','index.html')}</section>`,'404');
+console.log('Built 8 public pages, 12 blog posts, compatibility redirects and 404 page.');

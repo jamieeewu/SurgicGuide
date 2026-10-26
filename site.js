@@ -1,0 +1,11 @@
+const toggle=document.querySelector('.menu-toggle');
+const navigation=document.querySelector('#header-navigation');
+toggle?.addEventListener('click',()=>{const open=toggle.getAttribute('aria-expanded')!=='true';toggle.setAttribute('aria-expanded',String(open));navigation.classList.toggle('open',open)});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'){document.querySelectorAll('details[open]').forEach(el=>el.open=false);if(toggle){toggle.setAttribute('aria-expanded','false');navigation.classList.remove('open')}}});
+document.addEventListener('click',event=>document.querySelectorAll('details[open]').forEach(el=>{if(!el.contains(event.target))el.open=false}));
+const search=document.querySelector('#blog-search');
+search?.addEventListener('input',()=>{const query=search.value.trim().toLocaleLowerCase();let count=0;document.querySelectorAll('.post-card').forEach(card=>{const visible=card.textContent.toLocaleLowerCase().includes(query);card.hidden=!visible;if(visible)count++});document.querySelector('#no-results').hidden=count!==0;document.querySelector('#blog-results').textContent=`${count} article${count===1?'':'s'} found`});
+const form=document.querySelector('#contact-form');
+form?.addEventListener('submit',event=>{event.preventDefault();if(!form.reportValidity())return;const d=new FormData(form);const name=`${d.get('firstName')} ${d.get('lastName')}`.trim();const subject=encodeURIComponent(`SurgicGuide enquiry from ${name}`);const body=encodeURIComponent(`Name: ${name}\nEmail: ${d.get('email')}\n\n${d.get('message')}`);window.location.href=`mailto:enquiry@surgicguide.com?subject=${subject}&body=${body}`;document.querySelector('#form-status').textContent='If your email app did not open, email enquiry@surgicguide.com directly. Your enquiry is sent only when you send the email.'});
+let partnerIndex=0;document.querySelectorAll('[data-slide]').forEach(button=>button.addEventListener('click',()=>{const slides=[...document.querySelectorAll('.partner-slide')];partnerIndex=(partnerIndex+Number(button.dataset.slide)+slides.length)%slides.length;slides.forEach((slide,i)=>slide.classList.toggle('hidden',i!==partnerIndex))}));
+if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){document.querySelectorAll('video').forEach(v=>{v.pause();v.removeAttribute('autoplay')})}

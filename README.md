@@ -1,15 +1,36 @@
-# SurgicGuide static replica
+# SurgicGuide public website
 
-Static GitHub-ready replica of the SurgicGuide website.
+Independent static version of the public SurgicGuide Wix website, hosted on GitHub Pages. All images, background videos and fonts are bundled locally; the site does not load Wix scripts, APIs or hosting assets.
 
-## Important
-This repository is intentionally configured as a **non-indexable replica**. Every HTML page contains `noindex, nofollow, noarchive`, and `robots.txt` disallows crawling. The Wix website should remain the primary search-indexed version.
+The migration includes Home, Blog, Product, Science for Specialists, Science for Non-specialists, Team, Contact, References and all 12 public blog posts available on 26 October 2026. Original scientific wording, citations and the academic/fictional-company disclaimer are preserved. Member accounts, comments and likes are omitted because this is the public website only.
 
-## Pages
-- Home
-- Product
-- Specialist
-- Science for Non-specialists
-- References
+## Edit and build
 
-The scientific copy for Product, Specialist, Non-specialist and References was transcribed from the supplied Website draft document rather than rewritten for SEO.
+- Edit content in `content/site.json`.
+- Edit layouts in `scripts/build.mjs`, appearance in `styles.css`, and interactions in `site.js`.
+- Run `node scripts/build.mjs` after changing content or layouts. Commit the generated HTML as well as the source.
+- Preview with `python -m http.server 8000` and open http://localhost:8000.
+- No build or paid service is required to serve the committed files.
+
+`content/asset-sources.json` records where the original media came from. Images are resized to a maximum of 1920 × 1600 and converted to WebP for faster loading. Poppins fonts use the SIL Open Font License.
+
+## Contact form
+
+The form validates the required fields and opens an email draft addressed to `enquiry@surgicguide.com`. The visitor must send that email in their email app. It does not send or store submissions on a server, and it never displays a false submission success message. A normal email link and telephone link are also available.
+
+## Hosting and moving away from Wix
+
+`CNAME` is currently `test.surgicguide.com`; this migration preserves that domain setting. Enable GitHub Pages from the repository's main branch, root folder if it is not already enabled.
+
+The existing `noindex,nofollow,noarchive` metadata and `robots.txt` crawl restriction are deliberately retained while the site is at the test domain. Before making this the primary site:
+
+1. Verify the full site at the GitHub Pages address and custom domain.
+2. Point the desired domain to GitHub Pages and change `CNAME` and social-preview URLs to that domain.
+3. Remove the robots restrictions in `scripts/build.mjs`, redirect templates and `robots.txt`, then rebuild.
+4. Keep the domain registration and email service active independently of Wix. Cancelling Wix hosting does not move or cancel those services automatically.
+
+No Wix subscription, domain, DNS record or email account was changed by this migration. The original Wix site remains available as a reference.
+
+## Validation
+
+Run `node scripts/build.mjs` and `node scripts/validate.mjs`. With a local preview running and Playwright installed (`npm install --no-save playwright` and `npx playwright install chromium`), run `node scripts/browser-check.cjs`. Browser checks cover desktop/mobile rendering, local images, navigation, article search, partner slides and form validation. The `mobile-app` project is separate and is not changed by the website migration.
