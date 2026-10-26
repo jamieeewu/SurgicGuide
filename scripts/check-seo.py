@@ -41,14 +41,16 @@ def local(url):
     assert not parsed.query and not parsed.fragment, url
     return ROOT / (unquote(parsed.path).lstrip('/') or 'index.html')
 
-sitemap = ET.parse(ROOT / 'sitemap.xml').getroot()
+INDEXABLE = CONFIG.get('indexable', True)
+sitemap = ET.parse(ROOT / 'sitemap.xml').getroot() if INDEXABLE else None
 ns = {'s':'http://www.sitemaps.org/schemas/sitemap/0.9', 'image':'http://www.google.com/schemas/sitemap-image/1.1'}
-urls = [el.text for el in sitemap.findall('s:url/s:loc', ns)]
+urls = [el.text for el in sitemap.findall('s:url/s:loc', ns)] if INDEXABLE else [ORIGIN+'/' if name == 'home' else ORIGIN+'/'+('references' if name == 'references' else name)+'.html' for name in CONFIG['pages']] + [ORIGIN+'/post/'+p['slug']+'.html' for p in json.loads((ROOT/'content/site.json').read_text())['posts']]
 assert len(urls) == len(set(urls)) == 20, 'Expected 20 unique public URLs'
 assert (ROOT / 'CNAME').read_text().strip() == urlsplit(ORIGIN).netloc
 robots = (ROOT / 'robots.txt').read_text()
 assert '\\n' not in robots, 'robots.txt has escaped newlines'
-assert f'Sitemap: {ORIGIN}/sitemap.xml' in robots
+assert (f'Sitemap: {ORIGIN}/sitemap.xml' in robots) == INDEXABLE
+if not INDEXABLE: assert not (ROOT/'sitemap.xml').exists()
 assert 'Disallow: /\n' not in robots
 assert 'Disallow: /assets/' not in robots
 
@@ -58,7 +60,8 @@ for url in urls:
     assert path.is_file(), url
     page = Page(path.read_text())
     assert page.links['canonical'] == url
-    assert 'noindex' not in page.meta['robots'] and 'nofollow' not in page.meta['robots'], url
+    assert ('noindex' not in page.meta['robots']) == INDEXABLE, url
+    assert 'nofollow' not in page.meta['robots'], url
     assert page.title_text not in titles and page.title_text.strip(), url
     titles.add(page.title_text)
     description = page.meta['description']
@@ -71,7 +74,8 @@ for url in urls:
     assert local(page.meta['og:image']).is_file()
     assert page.meta['twitter:image'] == page.meta['og:image']
     assert int(page.meta['og:image:width']) > 0 and int(page.meta['og:image:height']) > 0
-    assert len(page.schemas) == 1
+    assert len(page.schemas) == (1 if INDEXABLE else 0)
+    if not INDEXABLE: continue
     graph = page.schemas[0]['@graph']
     assert page.schemas[0]['@context'] == 'https://schema.org'
     webpage = next(node for node in graph if node.get('@id') == url + '#webpage')
@@ -85,7 +89,7 @@ for url in urls:
         article = next(node for node in graph if node['@type'] == 'BlogPosting')
         assert article['datePublished'] == page.meta['article:published_time']
         assert 'hypothetical' in article['creativeWorkStatus']
-for image in sitemap.findall('s:url/image:image/image:loc', ns):
+for image in (sitemap.findall('s:url/image:image/image:loc', ns) if INDEXABLE else []):
     assert local(image.text).is_file()
 for path in ROOT.glob('**/index.html'):
     if '.git' in path.parts or 'mobile-app' in path.parts: continue
@@ -95,4 +99,4 @@ for path in ROOT.glob('**/index.html'):
     assert 'noindex' in page.meta['robots']
     assert local(page.links['canonical']).is_file()
 assert 'noindex' in Page((ROOT/'404.html').read_text()).meta['robots']
-print('SEO checks passed: 20 indexable pages, unique metadata, canonical URLs, sitemap/images, robots directives, JSON-LD and redirect exclusions.')
+print(f'SEO checks passed: 20 pages in {"indexable" if INDEXABLE else "noindex staging"} mode, unique metadata, canonical URLs and correct crawler directives.')

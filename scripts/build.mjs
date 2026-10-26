@@ -207,14 +207,14 @@ function document(title, content, current, file) {
   const depth=file.split('/').length-1;
   const prefix='../'.repeat(depth);
   const meta=seoMetadata(file,current,title);
-  const indexable=current !== '404';
+  const indexable=seo.indexable !== false && current !== '404';
   const head = `<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="${indexable ? 'index,follow,max-image-preview:large' : 'noindex,follow'}">
 <meta name="theme-color" content="#102b35"><title>${esc(meta.title)}</title>
 <meta name="description" content="${esc(meta.description)}"><link rel="canonical" href="${meta.url}">
 <link rel="icon" href="assets/surgicguide-logo-header.png"><link rel="preload" href="assets/media/pxiEyp8kv8JHgFVrJJfecnFHGPc.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="styles.css?v=${assetVersion}">
-<link rel="sitemap" type="application/xml" href="${seo.siteUrl}/sitemap.xml" title="Sitemap">
+${indexable ? `<link rel="sitemap" type="application/xml" href="${seo.siteUrl}/sitemap.xml" title="Sitemap">` : ''}
 <meta property="og:type" content="${meta.article ? 'article' : 'website'}"><meta property="og:site_name" content="${esc(seo.siteName)}"><meta property="og:locale" content="en_GB">
 <meta property="og:title" content="${esc(meta.title)}"><meta property="og:description" content="${esc(meta.description)}"><meta property="og:url" content="${meta.url}">
 <meta property="og:image" content="${meta.image}"><meta property="og:image:alt" content="${esc(meta.imageAlt)}"><meta property="og:image:width" content="${meta.imageDimensions.width}"><meta property="og:image:height" content="${meta.imageDimensions.height}">
@@ -253,6 +253,7 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${publicPages.map(p => `  <url><loc>${esc(p.url)}</loc>${p.sitemapImage ? `<image:image><image:loc>${esc(p.sitemapImage)}</image:loc></image:image>` : ''}</url>`).join('\n')}
 </urlset>\n`;
-fs.writeFileSync(path.join(root,'sitemap.xml'),sitemap);
-fs.writeFileSync(path.join(root,'robots.txt'),`User-agent: *\nAllow: /\nDisallow: /content/\nDisallow: /scripts/\nDisallow: /mobile-app/\n\nSitemap: ${seo.siteUrl}/sitemap.xml\n`);
-console.log('Built 20 indexable public pages, canonical redirects, sitemap and 404 page.');
+if (seo.indexable !== false) fs.writeFileSync(path.join(root,'sitemap.xml'),sitemap);
+else fs.rmSync(path.join(root,'sitemap.xml'), {force:true});
+fs.writeFileSync(path.join(root,'robots.txt'),`User-agent: *\nAllow: /\nDisallow: /content/\nDisallow: /scripts/\nDisallow: /mobile-app/\n${seo.indexable !== false ? `\nSitemap: ${seo.siteUrl}/sitemap.xml\n` : ''}`);
+console.log(`Built 20 ${seo.indexable === false ? 'noindex staging' : 'indexable public'} pages, canonical redirects and 404 page.`);

@@ -1,29 +1,24 @@
-# Search visibility
+# Search configuration
 
-## Public configuration
+This is a test website. It is deliberately excluded from search results while the primary public website remains in use.
 
-The canonical site is https://test.surgicguide.com/. All 20 public content pages permit indexing. Every page has a unique title and description, a canonical URL, social-sharing metadata and structured data. Articles include publication dates; breadcrumbs identify their place in the site.
+## Current settings
 
-The sitemap is https://test.surgicguide.com/sitemap.xml and is advertised in `robots.txt`. It lists canonical content URLs and relevant local images. Redirect aliases and the 404 page are not included. Source-code and content-data directories are excluded from crawling; styles, scripts and images needed to render the pages remain accessible.
+- `content/seo.json` sets `indexable` to `false`.
+- All content pages include `noindex,follow`.
+- Redirect aliases and the 404 page also remain excluded.
+- `robots.txt` allows crawling so search engines can discover the `noindex` directives.
+- No sitemap is published or advertised for the test site.
+- Page titles, descriptions, canonical URLs and social previews remain available.
 
-Search metadata is edited in `content/seo.json`. Rebuild with `node scripts/build.mjs`, then run `node scripts/validate.mjs` and `python scripts/check-seo.py`.
+Search engines remove previously indexed pages after recrawling; the change is not instantaneous. Remove any previously submitted test-site sitemap from its Search Console property. Search Console's temporary Removals tool can accelerate hiding a test URL, but does not replace permanent page-level `noindex` directives.
 
-## Search-engine discovery
+## Production configuration
 
-1. Open Google Search Console: https://search.google.com/search-console
-2. Add and verify the URL-prefix property `https://test.surgicguide.com/`, using its HTML verification file or meta tag. The verification value must come from the owner's account.
-3. Submit `https://test.surgicguide.com/sitemap.xml` in the property's Sitemaps section.
-4. Use URL Inspection to check the homepage and key scientific pages, then request indexing where available.
-5. Monitor indexing, search queries and crawl errors. Search engines determine whether and when pages are indexed and how they rank.
+When this site should become the primary searchable website, update `CNAME` and `siteUrl`, set `indexable` to `true`, and rebuild. The build then generates the sitemap, advertises it in `robots.txt`, enables public-page indexing and includes structured data. Verify the intended domain in Search Console and submit the generated sitemap.
 
-Bing Webmaster Tools can also verify the site and accept the same sitemap. Verification and submission require the owner's search-service account; they are not completed by publishing the website files alone.
+Keep one preferred public website to avoid competing copies. No search-engine account, domain or DNS configuration is changed by running the build.
 
-## Content and credibility
+## Validation
 
-This is an academic project for a hypothetical company. Search descriptions and structured data preserve that context. Company-story articles are illustrative; the site does not mark itself up as a real medical provider or claim clinical accreditation, approvals, reviews or ratings.
-
-Maintain descriptive scientific explainers, clear figure captions, accessible image descriptions, reliable citations and useful internal links. Earn relevant links from genuine academic/project profiles and related resources. Do not purchase links or create fabricated reviews.
-
-## Domain changes and duplicate copies
-
-Keep one preferred domain. If the site moves, update `CNAME` and `content/seo.json`, rebuild, redirect the previous address where possible and update the search-service property. Competing public copies can cause search engines to select a different canonical URL.
+Run `node scripts/build.mjs`, `node scripts/validate.mjs` and `python scripts/check-seo.py`. The search checks validate either production or staging mode, based on the configuration.

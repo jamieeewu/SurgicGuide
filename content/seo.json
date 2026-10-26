@@ -49,5 +49,6 @@
       "description": "Read FLIM explainers, biotech perspectives and fictional company stories from SurgicGuide, an academic project on AI-assisted surgical imaging.",
       "label": "Journal"
     }
-  }
+  },
+  "indexable": false
 }
