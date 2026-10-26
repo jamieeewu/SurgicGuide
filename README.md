@@ -1,38 +1,57 @@
-# SurgicGuide public website
+# SurgicGuide
 
-Independent static SurgicGuide website, hosted on GitHub Pages. The public Wix content is presented in a new responsive design with an editorial reading layout, consistent image sizes and an accessible figure viewer. All images, background videos and fonts are bundled locally; the site does not load Wix scripts, APIs or hosting assets.
+SurgicGuide is an academic project exploring fluorescence lifetime imaging microscopy (FLIM) and artificial intelligence for precision cancer surgery.
 
-The migration includes Home, Blog, Product, Science for Specialists, Science for Non-specialists, Team, Contact, References and all 12 public blog posts available on 26 October 2026. Original scientific wording, citations and the academic/fictional-company disclaimer are preserved. Member accounts, comments and likes are omitted because this is the public website only.
+The website includes Home, Product, Science for Specialists, Science for Non-specialists, Team, Contact, References and a journal with 12 articles. It uses a responsive editorial layout, locally bundled media and fonts, and an accessible viewer for detailed scientific figures.
 
-## Edit and build
+SurgicGuide Limited and its proposed system are hypothetical. The educational and non-clinical disclaimers are displayed throughout the website and mobile application.
 
-- Edit content in `content/site.json`.
-- Edit layouts in `scripts/build.mjs`, appearance in `styles.css`, and interactions in `site.js`.
-- Run `node scripts/build.mjs` after changing content or layouts. Commit the generated HTML as well as the source.
-- Preview with `python -m http.server 8000` and open http://localhost:8000.
-- No build or paid service is required to serve the committed files.
-- Image dimensions are recorded in `content/media.json` to reserve space before images load.
-- The figure sizes and descriptions are defined in `figureSettings` in `scripts/build.mjs`.
+## Development
 
-`content/asset-sources.json` records where the original media came from. Images are resized to a maximum of 1920 × 1600 and converted to WebP for faster loading. Poppins fonts use the SIL Open Font License.
+- Content: `content/site.json`
+- Page templates: `scripts/build.mjs`
+- Styles: `styles.css`
+- Interactions: `site.js`
+- Image dimensions: `content/media.json`
+- Mobile application: `mobile-app/`
 
-## Contact form
+Generate pages and validate local links:
 
-The form validates the required fields and opens an email draft addressed to `enquiry@surgicguide.com`. The visitor must send that email in their email app. It does not send or store submissions on a server, and it never displays a false submission success message. A normal email link and telephone link are also available.
+```bash
+node scripts/build.mjs
+node scripts/validate.mjs
+```
 
-## Hosting and moving away from Wix
+Preview the site:
 
-`CNAME` is currently `test.surgicguide.com`; this migration preserves that domain setting. Enable GitHub Pages from the repository's main branch, root folder if it is not already enabled.
+```bash
+python -m http.server 8000
+```
 
-The existing `noindex,nofollow,noarchive` metadata and `robots.txt` crawl restriction are deliberately retained while the site is at the test domain. Before making this the primary site:
+Open http://localhost:8000. Commit generated HTML together with changes to the content or templates. The committed files can be served directly without a build service.
 
-1. Verify the full site at the GitHub Pages address and custom domain.
-2. Point the desired domain to GitHub Pages and change `CNAME` and social-preview URLs to that domain.
-3. Remove the robots restrictions in `scripts/build.mjs`, redirect templates and `robots.txt`, then rebuild.
-4. Keep the domain registration and email service active independently of Wix. Cancelling Wix hosting does not move or cancel those services automatically.
+## Images and typography
 
-No Wix subscription, domain, DNS record or email account was changed by this migration. The original Wix site remains available as a reference.
+Media files are stored in `assets/media/`. Scientific figures retain their proportions and can be opened at full size. Figure descriptions and layout settings are defined in `scripts/build.mjs`. Images use WebP where appropriate, and natural dimensions reserve space while loading.
 
-## Validation
+Poppins is distributed under the SIL Open Font License; see `assets/Poppins-OFL.txt`. Scientific sources and illustration credits are listed on the References page.
 
-Run `node scripts/build.mjs` and `node scripts/validate.mjs`. With a local preview running and Playwright installed (`npm install --no-save playwright` and `npx playwright install chromium`), run `node scripts/browser-check.cjs`. Browser checks cover desktop/mobile rendering, local images, navigation, article search, scientific figure proportions, the figure viewer and focus return, bibliography numbering and form validation. The `mobile-app` project is separate and is not changed by the website migration.
+## Contact
+
+The enquiry form validates required fields and opens a draft addressed to `enquiry@surgicguide.com`. The visitor sends the email through their email app. The website does not receive or store submissions on a server.
+
+## Hosting
+
+GitHub Pages serves the repository's `main` branch from the root folder. The current custom domain is `test.surgicguide.com`, configured in `CNAME`.
+
+The test site is excluded from search indexing. When configuring a production domain, update `CNAME` and social-preview URLs, remove the indexing restrictions in the page templates and `robots.txt`, then rebuild.
+
+## Browser checks
+
+Install Playwright and its Chromium browser, then run:
+
+```bash
+node scripts/browser-check.cjs
+```
+
+The checks cover all 20 public pages at five screen widths, scientific figure proportions, image viewing and keyboard focus, menus, journal search, reference numbering, form validation and reduced-motion preferences.

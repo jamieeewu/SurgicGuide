@@ -9,7 +9,7 @@ const media = JSON.parse(fs.readFileSync(path.join(root, 'content/media.json'), 
 const esc = (s = '') => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
 const plain = html => html.replace(/<[^>]*>/g, '').replace(/&nbsp;|[\u00a0\u200b\u200c\ufeff]/g, ' ').replace(/\s+/g, ' ').trim();
 
-// Keep the words and semantic emphasis, rather than the fixed Wix typesetting.
+// Keep the words and semantic emphasis, without fixed presentation styles.
 function clean(html = '') {
   return html.replace(/\sclass="[^"]*"/g, '').replace(/\sstyle="([^"]*)"/g, (_, style) => {
     const classes = [];

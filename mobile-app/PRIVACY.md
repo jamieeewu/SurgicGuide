@@ -14,7 +14,7 @@ The simulated FLIM viewer uses fixed illustrative values generated within the ap
 
 The app can open the SurgicGuide website in the device's browser. Once the user leaves the app, the destination website and browser environment may operate under their own privacy and technical policies.
 
-The Team image is currently retrieved from Wix-hosted static media. This network request may necessarily expose standard connection information, such as IP address and user-agent/network metadata, to the hosting provider.
+The Team image is bundled with the application and does not require a network request.
 
 ## Medical status
 

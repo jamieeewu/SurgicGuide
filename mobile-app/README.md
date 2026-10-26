@@ -17,7 +17,7 @@ Version 1.0 is feature-complete at source-code level. It includes:
 - EAS preview and production build profiles
 - Academic / non-clinical disclaimers throughout
 
-The Product, Specialist and Non-specialist scientific wording is intentionally preserved from the SurgicGuide source website.
+The website and app share scientific content covering the product concept, specialist research and an introduction to FLIM.
 
 ## Important status notice
 
@@ -57,7 +57,7 @@ Store distribution additionally requires the owner's Apple Developer and/or Goog
 1. Run `npm install`.
 2. Run `npm run doctor` and resolve any SDK compatibility warnings.
 3. Test every screen on at least one current iPhone and one current Android device.
-4. Confirm the remote Team image loads on production networks.
+4. Confirm the bundled Team image displays correctly on both platforms.
 5. Create final app icon, adaptive Android icon and splash artwork before store submission.
 6. Build iOS and Android production binaries with EAS.
 7. Complete App Store / Play Store privacy and content questionnaires accurately.
