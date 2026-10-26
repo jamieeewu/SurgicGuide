@@ -226,22 +226,3 @@ body > footer .footer-inner p:last-child {
   margin: 8px auto 40px;
   border-radius: 18px;
 }
-
-
-/* SurgicGuide brand logo */
-.brand {
-  display: inline-flex;
-  align-items: center;
-  flex: 0 0 auto;
-}
-.brand-logo {
-  display: block;
-  width: 230px;
-  height: auto;
-  object-fit: contain;
-  object-position: left center;
-}
-@media(max-width:760px) {
-  nav { padding: 10px 16px; gap: 12px; }
-  .brand-logo { width: 155px; height: auto; }
-}
