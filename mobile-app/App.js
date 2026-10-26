@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { Image, Linking, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const C={ink:"#17202A",blue:"#315E78",pale:"#EAF3F7",line:"#D9E2E7",white:"#FFFFFF",muted:"#65727A",grey:"#F2F3F3"};
-const TEAM_IMAGE="https://static.wixstatic.com/media/cfabba_1d193a3c27dd4a06a1afb75c572d74de~mv2.png";\nconst WEBSITE="https://wuhofung01.wixsite.com/surgicguide";\nconst openWebsite=(path="")=>Linking.openURL(`${WEBSITE}${path}`);
+const TEAM_IMAGE="https://static.wixstatic.com/media/cfabba_1d193a3c27dd4a06a1afb75c572d74de~mv2.png";
+const WEBSITE="https://wuhofung01.wixsite.com/surgicguide";
+const openWebsite=(path="")=>Linking.openURL(`${WEBSITE}${path}`);
 const DISCLAIMER="SurgicGuide Limited is a hypothetical company created for academic and illustrative purposes. No information in this app should be interpreted as medical advice, a clinical recommendation, or a representation that any product or technology has been clinically validated, approved, or authorised for use.";
 
 const PRODUCT=[
