@@ -1,0 +1,56 @@
+media:
+  input: assets/media
+  output: /assets/media
+  rename: safe
+  extensions: [png, jpg, jpeg, webp, gif]
+content:
+  - name: posts
+    label: Journal posts
+    type: collection
+    path: content/posts
+    format: json
+    subfolders: false
+    filename:
+      template: "{primary}.json"
+      field: create
+    view:
+      primary: title
+      fields: [title, published, date]
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: published
+        label: Publish on website
+        type: boolean
+        default: false
+        description: "Turn on and save to publish. Turn off to remove from the website. All saved text and images remain public on GitHub, even when this is off. Keep confidential drafts in a private app."
+      - name: date
+        label: Article date
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: author
+        label: Author
+        type: string
+        default: SurgicGuide
+      - name: image
+        label: Cover image
+        type: image
+        required: true
+      - name: excerpt
+        label: Short summary
+        type: text
+        description: A short introduction shown on the journal page.
+      - name: html
+        label: Article
+        type: rich-text
+        required: true
+        options:
+          format: html

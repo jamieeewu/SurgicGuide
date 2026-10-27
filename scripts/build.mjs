@@ -1,10 +1,12 @@
 import fs from 'node:fs';
+import { loadPosts } from './posts.mjs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 
 const root = path.resolve(import.meta.dirname, '..');
 const assetVersion = createHash('sha256').update(fs.readFileSync(path.join(root, 'styles.css'))).update(fs.readFileSync(path.join(root, 'site.js'))).digest('hex').slice(0, 10);
 const site = JSON.parse(fs.readFileSync(path.join(root, 'content/site.json'), 'utf8'));
+site.posts = loadPosts(root);
 const seo = JSON.parse(fs.readFileSync(path.join(root, 'content/seo.json'), 'utf8'));
 const publicPages = [];
 const media = JSON.parse(fs.readFileSync(path.join(root, 'content/media.json'), 'utf8'));
@@ -36,7 +38,7 @@ function social() {
   return '<a class="linkedin-link" href="https://www.linkedin.com/in/jamie-wu-975118244" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">↗︎</span></a>';
 }
 function footer(current) {
-  return `<footer class="site-footer"><div class="container"><div class="footer-top"><a class="brand" href="index.html">${site.logo}<span>SurgicGuide<span class="brand-subtitle">Precision through insight</span></span></a>${nav(current, true)}</div><div class="footer-bottom"><p>© SurgicGuide 2025</p>${social()}</div><details class="disclaimer"><summary><span>Academic project</span> SurgicGuide is a hypothetical company. <span class="disclaimer-more">Read the full disclaimer <span aria-hidden="true">＋</span></span></summary><div>${clean(site.footer[1])}</div></details></div></footer>`;
+  return `<footer class="site-footer"><div class="container"><div class="footer-top"><a class="brand" href="index.html">${site.logo}<span>SurgicGuide<span class="brand-subtitle">Precision through insight</span></span></a>${nav(current, true)}</div><div class="footer-bottom"><p>© SurgicGuide 2025 · <a href="editor.html">Editor login</a></p>${social()}</div><details class="disclaimer"><summary><span>Academic project</span> SurgicGuide is a hypothetical company. <span class="disclaimer-more">Read the full disclaimer <span aria-hidden="true">＋</span></span></summary><div>${clean(site.footer[1])}</div></details></div></footer>`;
 }
 function pageIntro({title, eyebrow, description = '', photo, extra = ''}) {
   return `<section class="page-intro"><div class="container intro-grid"><div class="intro-copy"><p class="eyebrow">${eyebrow}</p><h1>${title}</h1>${description ? `<div class="intro-description">${description}</div>` : ''}${extra}</div>${photo ? `<div class="intro-image">${image(photo, {eager:true, alt:''})}</div>` : ''}</div></section>`;
@@ -156,7 +158,7 @@ function references() {
   return `${pageIntro({title:'References', eyebrow:'Sources & further reading', description:'<p>The scientific literature and image sources behind our content.</p>'})}<section class="section"><div class="container references-content">${entries}</div></section>`;
 }
 function blog() {
-  return `${pageIntro({title:'News & perspectives.', eyebrow:'The SurgicGuide journal', description:'<p>Research ideas, industry perspectives and life at SurgicGuide.</p>'})}<section class="section"><div class="container blog-content"><div class="blog-toolbar"><p class="article-count">12 articles</p><label><span class="visually-hidden">Search articles</span><input type="search" id="blog-search" placeholder="Search the journal…"></label></div><p id="blog-results" class="visually-hidden" role="status"></p>${postCards(site.posts)}<div id="no-results" hidden><h2>No articles found.</h2><p>Try a different keyword or clear your search.</p></div></div></section>`;
+  return `${pageIntro({title:'News & perspectives.', eyebrow:'The SurgicGuide journal', description:'<p>Research ideas, industry perspectives and life at SurgicGuide.</p>'})}<section class="section"><div class="container blog-content"><div class="blog-toolbar"><p class="article-count">${site.posts.length} ${site.posts.length === 1 ? 'article' : 'articles'}</p><label><span class="visually-hidden">Search articles</span><input type="search" id="blog-search" placeholder="Search the journal…"></label></div><p id="blog-results" class="visually-hidden" role="status"></p>${postCards(site.posts)}<div id="no-results" hidden><h2>No articles found.</h2><p>Try a different keyword or clear your search.</p></div></div></section>`;
 }
 function post(p) {
   return `<article class="post-content"><header class="post-header container"><a href="blog.html" class="text-link back-link">← Back to the journal</a><p class="eyebrow">News & perspectives</p><h1>${esc(p.title)}</h1><p class="post-meta">${esc(p.author)}<span aria-hidden="true"> / </span><time datetime="${esc(p.date.slice(0,10))}">${esc(formatDate(p.date))}</time></p></header><div class="post-body prose">${clean(p.html)}</div><div class="post-end">${button('All articles','blog.html',true)}</div></article>`;
@@ -226,7 +228,7 @@ ${indexable ? `<script type="application/ld+json">${meta.structured}</script>` :
 <html lang="${seo.language}"><head>${head}</head>
 <body class="page-${current}"><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="container header-inner"><a href="index.html" class="brand" aria-label="SurgicGuide Ltd home">${site.logo}<span>SurgicGuide<span class="brand-subtitle">Precision through insight</span></span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="header-navigation">Menu <span aria-hidden="true">☰</span></button><div id="header-navigation">${nav(current)}</div></div></header><main id="main">${content}</main>${footer(current)}${figureDialog()}</body></html>`;
   html = html.replace(/↗\uFE0E*/g, '<svg class="icon-arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 12 12 4M4 4h8v8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-  if (depth) html=html.replace(/(href|src)="(?!https?:|mailto:|tel:|#|data:)([^\"]+)"/g,(_,attr,url)=>`${attr}="${prefix}${url}"`);
+  if (depth) html=html.replace(/(href|src)="(?!https?:|mailto:|tel:|#|data:|\/)([^\"]+)"/g,(_,attr,url)=>`${attr}="${prefix}${url}"`);
   return html;
 }
 function write(file,title,content,current) {
@@ -234,6 +236,7 @@ function write(file,title,content,current) {
   fs.writeFileSync(dest,document(title,content,current,file));
   if (current !== '404') publicPages.push(seoMetadata(file,current,title));
 }
+fs.rmSync(path.join(root, 'post'), {recursive:true, force:true});
 write('index.html','Real-Time Surgical Guidance with FLIM and AI',home(),'home');
 for(const p of ['product','specialist','nonspecialist']) write(p+'.html',p==='product'?'AI-integrated FLIM System':p==='specialist'?'Science for Specialists':'Science for Non-specialists',technical(p),p);
 write('team.html','Our Team',team(),'team');
@@ -256,4 +259,4 @@ ${publicPages.map(p => `  <url><loc>${esc(p.url)}</loc>${p.sitemapImage ? `<imag
 if (seo.indexable !== false) fs.writeFileSync(path.join(root,'sitemap.xml'),sitemap);
 else fs.rmSync(path.join(root,'sitemap.xml'), {force:true});
 fs.writeFileSync(path.join(root,'robots.txt'),`User-agent: *\nAllow: /\nDisallow: /content/\nDisallow: /scripts/\nDisallow: /mobile-app/\n${seo.indexable !== false ? `\nSitemap: ${seo.siteUrl}/sitemap.xml\n` : ''}`);
-console.log(`Built 20 ${seo.indexable === false ? 'noindex staging' : 'indexable public'} pages, canonical redirects and 404 page.`);
+console.log(`Built ${publicPages.length} ${seo.indexable === false ? 'noindex staging' : 'indexable public'} pages, canonical redirects and 404 page.`);

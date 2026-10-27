@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const project = path.resolve(__dirname, '..');
 const site = JSON.parse(fs.readFileSync(path.join(project, 'content/site.json')));
+site.posts = fs.readdirSync(path.join(project,'content/posts')).filter(f=>f.endsWith('.json')).map(f=>({...JSON.parse(fs.readFileSync(path.join(project,'content/posts',f))),slug:f.slice(0,-5)})).filter(p=>p.published);
 const root = process.env.SITE_URL || `file://${project}/`;
 const pages = ['index.html','product.html','specialist.html','nonspecialist.html','team.html','contact.html','references.html','blog.html', ...site.posts.map(p => `post/${p.slug}.html`)];
 const screenshots = process.env.SCREENSHOT_DIR;
@@ -41,7 +42,7 @@ const screenshots = process.env.SCREENSHOT_DIR;
         await page.screenshot({path:path.join(screenshots, `${width}-${file.replace('.html','')}.png`),fullPage:true});
       }
     }
-    console.log(`PASS: all 20 pages at ${width}px`);
+    console.log(`PASS: all ${pages.length} pages at ${width}px`);
   }
   // Navigation and accessibility behaviour at mobile and desktop sizes.
   for (const width of [1440,390]) {
@@ -77,7 +78,7 @@ const screenshots = process.env.SCREENSHOT_DIR;
   assert.equal(await page.locator('.post-card:visible').count(),0);
   assert(await page.locator('#no-results').isVisible());
   await page.locator('#blog-search').fill('');
-  assert.equal(await page.locator('.post-card:visible').count(),12);
+  assert.equal(await page.locator('.post-card:visible').count(),site.posts.length);
   await page.goto(root+'references.html');
   assert.equal(await page.locator('.reference-list').count(),1);
   assert.equal(await page.locator('.reference-list > li').count(),28);

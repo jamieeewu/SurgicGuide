@@ -1,0 +1,47 @@
+name: Publish website
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'mobile-app/**'
+      - '*.md'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: website-pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build articles and sitemap
+        run: node scripts/build.mjs
+      - name: Check content and links
+        run: node scripts/validate.mjs
+      - name: Check search metadata
+        run: python3 scripts/check-seo.py
+      - name: Check publishing lifecycle
+        run: node scripts/posts.test.mjs
+      - name: Package public files
+        run: node scripts/package-site.mjs
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy website
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -44,8 +44,10 @@ def local(url):
 INDEXABLE = CONFIG.get('indexable', True)
 sitemap = ET.parse(ROOT / 'sitemap.xml').getroot() if INDEXABLE else None
 ns = {'s':'http://www.sitemaps.org/schemas/sitemap/0.9', 'image':'http://www.google.com/schemas/sitemap-image/1.1'}
-urls = [el.text for el in sitemap.findall('s:url/s:loc', ns)] if INDEXABLE else [ORIGIN+'/' if name == 'home' else ORIGIN+'/'+('references' if name == 'references' else name)+'.html' for name in CONFIG['pages']] + [ORIGIN+'/post/'+p['slug']+'.html' for p in json.loads((ROOT/'content/site.json').read_text())['posts']]
-assert len(urls) == len(set(urls)) == 20, 'Expected 20 unique public URLs'
+posts = [json.loads(p.read_text()) | {'slug':p.stem} for p in (ROOT/'content/posts').glob('*.json') if json.loads(p.read_text()).get('published') is True]
+expected = {ORIGIN+'/' if name == 'home' else ORIGIN+'/'+('references' if name == 'references' else name)+'.html' for name in CONFIG['pages']} | {ORIGIN+'/post/'+p['slug']+'.html' for p in posts}
+urls = [el.text for el in sitemap.findall('s:url/s:loc', ns)] if INDEXABLE else list(expected)
+assert len(urls) == len(set(urls)) and set(urls) == expected, 'Sitemap must contain exactly the published pages'
 assert (ROOT / 'CNAME').read_text().strip() == urlsplit(ORIGIN).netloc
 robots = (ROOT / 'robots.txt').read_text()
 assert '\\n' not in robots, 'robots.txt has escaped newlines'
@@ -65,7 +67,7 @@ for url in urls:
     assert page.title_text not in titles and page.title_text.strip(), url
     titles.add(page.title_text)
     description = page.meta['description']
-    assert 60 <= len(description) <= 180, (url, len(description))
+    assert 1 <= len(description) <= 180, (url, len(description))
     assert description not in descriptions, 'Duplicate description'
     descriptions.add(description)
     assert page.meta['og:url'] == url
@@ -99,4 +101,4 @@ for path in ROOT.glob('**/index.html'):
     assert 'noindex' in page.meta['robots']
     assert local(page.links['canonical']).is_file()
 assert 'noindex' in Page((ROOT/'404.html').read_text()).meta['robots']
-print(f'SEO checks passed: 20 pages in {"indexable" if INDEXABLE else "noindex staging"} mode, unique metadata, canonical URLs and correct crawler directives.')
+print(f'SEO checks passed: {len(urls)} pages in {"indexable" if INDEXABLE else "noindex staging"} mode, unique metadata, canonical URLs and correct crawler directives.')

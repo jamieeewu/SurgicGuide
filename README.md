@@ -2,7 +2,7 @@
 
 SurgicGuide is an academic project exploring fluorescence lifetime imaging microscopy (FLIM) and artificial intelligence for precision cancer surgery.
 
-The website includes Home, Product, Science for Specialists, Science for Non-specialists, Team, Contact, References and a journal with 12 articles. It uses a responsive editorial layout, locally bundled media and fonts, and an accessible viewer for detailed scientific figures.
+The website includes Home, Product, Science for Specialists, Science for Non-specialists, Team, Contact, References and an editable journal. It uses a responsive editorial layout, locally bundled media and fonts, and an accessible viewer for detailed scientific figures.
 
 SurgicGuide Limited and its proposed system are hypothetical. The educational and non-clinical disclaimers are displayed throughout the website and mobile application.
 
@@ -45,7 +45,7 @@ The enquiry form validates required fields and opens a draft addressed to `enqui
 
 GitHub Pages serves the repository's `main` branch from the root folder. The current custom domain is `test.surgicguide.com`, configured in `CNAME`.
 
-The test site is searchable. `content/seo.json` has `indexable: true`; the build enables indexing for all 20 content pages, generates `sitemap.xml` and advertises it in `robots.txt`.
+The test site is searchable. `content/seo.json` has `indexable: true`; the build enables indexing for all published content pages, generates `sitemap.xml` and advertises it in `robots.txt`.
 
 Titles, descriptions, canonical URLs, social previews and structured data are included. See `SEO.md` for the search configuration.
 
@@ -57,4 +57,8 @@ Install Playwright and its Chromium browser, then run:
 node scripts/browser-check.cjs
 ```
 
-The checks cover all 20 public pages at five screen widths, scientific figure proportions, image viewing and keyboard focus, menus, journal search, reference numbering, form validation and reduced-motion preferences.
+The checks cover all published public pages at five screen widths, scientific figure proportions, image viewing and keyboard focus, menus, journal search, reference numbering, form validation and reduced-motion preferences.
+
+## Web editor
+
+Use [Pages CMS](https://app.pagescms.org/) to edit the journal from a browser. See [EDITOR.md](EDITOR.md) for owner setup, publishing and draft visibility. Articles live in `content/posts/*.json`; the filename supplies the stable URL slug.
