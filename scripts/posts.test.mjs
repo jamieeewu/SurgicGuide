@@ -11,14 +11,15 @@ test('new posts publish; unpublished and deleted posts disappear; source stays o
   try {
     for(const item of ['content','scripts','assets','styles.css','site.js','CNAME','editor.html']) fs.cpSync(path.join(root,item),path.join(tmp,item),{recursive:true});
     const baseline=loadPosts(tmp).length;
+    fs.writeFileSync(path.join(tmp,'.build-seo.json'),JSON.stringify({articles:{'new-article':'2026-10-29T08:00:00+08:00'}}));
     const file=path.join(tmp,'content/posts/new-article.json');
-    const entry={title:'A new research article',date:'2026-10-28',author:'Editor',image:'/assets/surgicguide-social-preview-v2.png',excerpt:'An independent summary for the new article.',html:'<img src="blob:https://app.pagescms.org/temporary-preview" alt="Unfinished upload"><p>A unique article written in the web editor with an uploaded image.</p><img src="/assets/surgicguide-social-preview-v2.png" alt="Test image">',published:true};
+    const entry={title:'A new research article',seoTitle:'A custom search title | SurgicGuide',seoDescription:'A clear and accurate search description for this independent research article.',date:'2026-10-28',author:'Editor',image:'/assets/surgicguide-social-preview-v2.png',excerpt:'An independent summary for the new article.',html:'<img src="blob:https://app.pagescms.org/temporary-preview" alt="Unfinished upload"><p>A unique article written in the web editor with an uploaded image.</p><img src="/assets/surgicguide-social-preview-v2.png" alt="Test image">',published:true};
     fs.writeFileSync(file,JSON.stringify(entry));
     let revision=0;
     const run=script=>import(pathToFileURL(path.join(tmp,'scripts',script)).href+'?revision='+revision++);
     await run('build.mjs');await run('validate.mjs');
     const output=path.join(tmp,'post/new-article.html');
-    assert(fs.existsSync(output));assert(!fs.readFileSync(output,'utf8').includes('blob:'));assert(fs.readFileSync(output,'utf8').includes('A unique article written'));assert(fs.readFileSync(path.join(tmp,'blog.html'),'utf8').includes(`${baseline+1} articles`));
+    assert(fs.existsSync(output));assert(fs.readFileSync(output,'utf8').includes('A custom search title | SurgicGuide'));assert(fs.readFileSync(output,'utf8').includes('2026-10-29T08:00:00+08:00'));assert(!fs.readFileSync(output,'utf8').includes('blob:'));assert(fs.readFileSync(output,'utf8').includes('A unique article written'));assert(fs.readFileSync(path.join(tmp,'blog.html'),'utf8').includes(`${baseline+1} articles`));
     assert(fs.readFileSync(path.join(tmp,'index.html'),'utf8').includes('A new research article'));
     assert(fs.readFileSync(output,'utf8').includes('src="../assets/surgicguide-social-preview-v2.png"'));
     entry.published=false;fs.writeFileSync(file,JSON.stringify(entry));await run('build.mjs');await run('validate.mjs');

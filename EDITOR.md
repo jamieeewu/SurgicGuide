@@ -30,3 +30,7 @@ node scripts/validate.mjs
 python3 scripts/check-seo.py
 node scripts/posts.test.mjs
 node scripts/package-site.mjs
+
+## Search appearance
+
+Optional search title and description fields control page metadata. Leave them blank for automatic values from the title and short summary. Use accurate descriptions around 150 characters. Articles gain authorship metadata, related reading links and automatic sitemap/feed updates when published.

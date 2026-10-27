@@ -54,3 +54,11 @@ content:
         required: true
         options:
           format: html
+      - name: seoTitle
+        label: Search result title (optional)
+        type: string
+        description: A clear, accurate title for Google. Leave blank to use the article title.
+      - name: seoDescription
+        label: Search result description (optional)
+        type: text
+        description: Summarise the article accurately in about 150 characters. Leave blank to use the short summary.

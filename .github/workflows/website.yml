@@ -16,9 +16,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Prepare image sizes and actual update dates
+        run: |
+          python3 -m pip install Pillow
+          python3 scripts/prepare-seo.py
       - name: Build articles and sitemap
         run: node scripts/build.mjs
       - name: Check content and links

@@ -90,6 +90,8 @@ for url in urls:
     if '/post/' in url:
         article = next(node for node in graph if node['@type'] == 'BlogPosting')
         assert article['datePublished'] == page.meta['article:published_time']
+        assert article['author']['name'].strip()
+        if 'dateModified' in article: assert article['dateModified'] == page.meta['article:modified_time']
         assert 'hypothetical' in article['creativeWorkStatus']
 for image in (sitemap.findall('s:url/image:image/image:loc', ns) if INDEXABLE else []):
     assert local(image.text).is_file()
@@ -102,3 +104,11 @@ for path in ROOT.glob('**/index.html'):
     assert local(page.links['canonical']).is_file()
 assert 'noindex' in Page((ROOT/'404.html').read_text()).meta['robots']
 print(f'SEO checks passed: {len(urls)} pages in {"indexable" if INDEXABLE else "noindex staging"} mode, unique metadata, canonical URLs and correct crawler directives.')
+
+feed = ET.parse(ROOT/'feed.xml').getroot()
+assert {i.findtext('link') for i in feed.findall('channel/item')} == {ORIGIN+'/post/'+p['slug']+'.html' for p in posts}
+for el in (sitemap.findall('s:url', ns) if INDEXABLE else []):
+    if el.find('s:lastmod',ns) is not None:
+        from datetime import datetime
+        datetime.fromisoformat(el.findtext('s:lastmod',namespaces=ns).replace('Z','+00:00'))
+print('Article author, update dates and RSS checks passed.')

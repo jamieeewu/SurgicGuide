@@ -1,2 +1,6 @@
 
 _site/
+
+.build-seo.json
+
+assets/responsive/
