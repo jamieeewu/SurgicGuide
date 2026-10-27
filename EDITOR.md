@@ -9,7 +9,7 @@ Open https://test.surgicguide.com/editor.html for the editing guide and https://
 
 ## Writing
 
-Choose Journal posts, create a post, add a title, article date, cover image, summary and formatted article. Upload JPEG, PNG or WebP images; convert HEIC photos before upload. Turn on Publish on website and save. Existing articles can be edited in the same collection. The filename becomes the article URL; retain filenames when editing published articles.
+Choose Journal posts, create a post, add a title, article date, cover image, summary and formatted article. Insert article images using the editor’s image/media picker and wait for the upload to finish before saving. Temporary image previews are omitted from published articles; the other text and saved images still publish. Upload JPEG, PNG or WebP images; convert HEIC photos before upload. Turn on Publish on website and save. Existing articles can be edited in the same collection. The filename becomes the article URL; retain filenames when editing published articles.
 
 Save with publishing off to exclude an article from the website. **This is not private storage:** every saved article and uploaded image in this public repository can be read on GitHub, including commit history. Keep confidential drafts in a private app. Deleting or unpublishing removes the generated page on the next successful deployment, but does not erase Git history or search caches.
 

@@ -10,14 +10,15 @@ test('new posts publish; unpublished and deleted posts disappear; source stays o
   const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'journal-test-'));
   try {
     for(const item of ['content','scripts','assets','styles.css','site.js','CNAME','editor.html']) fs.cpSync(path.join(root,item),path.join(tmp,item),{recursive:true});
+    const baseline=loadPosts(tmp).length;
     const file=path.join(tmp,'content/posts/new-article.json');
-    const entry={title:'A new research article',date:'2026-10-28',author:'Editor',image:'/assets/surgicguide-social-preview-v2.png',excerpt:'An independent summary for the new article.',html:'<p>A unique article written in the web editor with an uploaded image.</p><img src="/assets/surgicguide-social-preview-v2.png" alt="Test image">',published:true};
+    const entry={title:'A new research article',date:'2026-10-28',author:'Editor',image:'/assets/surgicguide-social-preview-v2.png',excerpt:'An independent summary for the new article.',html:'<img src="blob:https://app.pagescms.org/temporary-preview" alt="Unfinished upload"><p>A unique article written in the web editor with an uploaded image.</p><img src="/assets/surgicguide-social-preview-v2.png" alt="Test image">',published:true};
     fs.writeFileSync(file,JSON.stringify(entry));
     let revision=0;
     const run=script=>import(pathToFileURL(path.join(tmp,'scripts',script)).href+'?revision='+revision++);
     await run('build.mjs');await run('validate.mjs');
     const output=path.join(tmp,'post/new-article.html');
-    assert(fs.existsSync(output));assert(fs.readFileSync(path.join(tmp,'blog.html'),'utf8').includes('13 articles'));
+    assert(fs.existsSync(output));assert(!fs.readFileSync(output,'utf8').includes('blob:'));assert(fs.readFileSync(output,'utf8').includes('A unique article written'));assert(fs.readFileSync(path.join(tmp,'blog.html'),'utf8').includes(`${baseline+1} articles`));
     assert(fs.readFileSync(path.join(tmp,'index.html'),'utf8').includes('A new research article'));
     assert(fs.readFileSync(output,'utf8').includes('src="../assets/surgicguide-social-preview-v2.png"'));
     entry.published=false;fs.writeFileSync(file,JSON.stringify(entry));await run('build.mjs');await run('validate.mjs');
