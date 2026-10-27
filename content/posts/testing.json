@@ -5,5 +5,5 @@
   "author": "SurgicGuide",
   "image": "/assets/media/cfabba_44f3173b400a4b2f83a496a077ea7e85~mv2.webp",
   "excerpt": "Testing the new system",
-  "html": "<p>Testing the new system</p><img src=\"blob:https://app.pagescms.org/ed2c8cc9-7085-4f1b-9a22-4794b1d43bf9\" alt=\"image.jpeg\"><p>Testing…</p>"
+  "html": "<p>Testing the new system</p><p>/assets/media/</p><p>Testing…</p>"
 }
