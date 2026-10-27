@@ -221,7 +221,7 @@ function document(title, content, current, file) {
   const indexable=seo.indexable !== false && current !== '404';
   const head = `<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="${indexable ? 'index,follow,max-image-preview:large' : 'noindex,follow'}">
-<meta name="theme-color" content="#102b35"><title>${esc(meta.title)}</title>
+<meta name="theme-color" content="#274e65"><title>${esc(meta.title)}</title>
 <meta name="description" content="${esc(meta.description)}"><link rel="canonical" href="${meta.url}">
 <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon.png"><link rel="preload" href="assets/media/pxiEyp8kv8JHgFVrJJfecnFHGPc.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="alternate" type="application/rss+xml" title="SurgicGuide Journal" href="${seo.siteUrl}/feed.xml"><link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="styles.css?v=${assetVersion}">
