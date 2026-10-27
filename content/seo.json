@@ -50,5 +50,5 @@
       "label": "Journal"
     }
   },
-  "indexable": false
+  "indexable": true
 }

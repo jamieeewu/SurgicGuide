@@ -212,7 +212,7 @@ function document(title, content, current, file) {
 <meta name="robots" content="${indexable ? 'index,follow,max-image-preview:large' : 'noindex,follow'}">
 <meta name="theme-color" content="#102b35"><title>${esc(meta.title)}</title>
 <meta name="description" content="${esc(meta.description)}"><link rel="canonical" href="${meta.url}">
-<link rel="icon" href="assets/surgicguide-logo-header.png"><link rel="preload" href="assets/media/pxiEyp8kv8JHgFVrJJfecnFHGPc.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg"><link rel="preload" href="assets/media/pxiEyp8kv8JHgFVrJJfecnFHGPc.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="styles.css?v=${assetVersion}">
 ${indexable ? `<link rel="sitemap" type="application/xml" href="${seo.siteUrl}/sitemap.xml" title="Sitemap">` : ''}
 <meta property="og:type" content="${meta.article ? 'article' : 'website'}"><meta property="og:site_name" content="${esc(seo.siteName)}"><meta property="og:locale" content="en_GB">

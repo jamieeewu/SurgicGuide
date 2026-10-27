@@ -45,9 +45,9 @@ The enquiry form validates required fields and opens a draft addressed to `enqui
 
 GitHub Pages serves the repository's `main` branch from the root folder. The current custom domain is `test.surgicguide.com`, configured in `CNAME`.
 
-The test site is deliberately excluded from search indexing. `content/seo.json` has `indexable: false`; the build applies `noindex,follow` to content pages and does not publish or advertise a sitemap. Crawling remains allowed so search engines can see the exclusion directive.
+The test site is searchable. `content/seo.json` has `indexable: true`; the build enables indexing for all 20 content pages, generates `sitemap.xml` and advertises it in `robots.txt`.
 
-Titles, descriptions, canonical URLs and social previews are retained. Set `indexable: true` only when this site should appear in search, then rebuild. See `SEO.md` for the search configuration.
+Titles, descriptions, canonical URLs, social previews and structured data are included. See `SEO.md` for the search configuration.
 
 ## Browser checks
 

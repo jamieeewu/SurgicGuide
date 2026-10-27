@@ -1,24 +1,9 @@
 # Search configuration
 
-This is a test website. It is deliberately excluded from search results while the primary public website remains in use.
+The test site at https://test.surgicguide.com/ is enabled for search indexing at the owner's request.
 
-## Current settings
+All 20 public content pages include index,follow directives, unique titles and descriptions, canonical URLs, social previews and structured data. Redirect aliases and the 404 page remain noindex. Crawling is allowed, and robots.txt advertises the generated sitemap.xml.
 
-- `content/seo.json` sets `indexable` to `false`.
-- All content pages include `noindex,follow`.
-- Redirect aliases and the 404 page also remain excluded.
-- `robots.txt` allows crawling so search engines can discover the `noindex` directives.
-- No sitemap is published or advertised for the test site.
-- Page titles, descriptions, canonical URLs and social previews remain available.
+Submit https://test.surgicguide.com/sitemap.xml in this domain's Google Search Console property. Search engines decide when to crawl and index pages; enabling indexing does not guarantee inclusion or ranking. The primary website's settings are unchanged.
 
-Search engines remove previously indexed pages after recrawling; the change is not instantaneous. Remove any previously submitted test-site sitemap from its Search Console property. Search Console's temporary Removals tool can accelerate hiding a test URL, but does not replace permanent page-level `noindex` directives.
-
-## Production configuration
-
-When this site should become the primary searchable website, update `CNAME` and `siteUrl`, set `indexable` to `true`, and rebuild. The build then generates the sitemap, advertises it in `robots.txt`, enables public-page indexing and includes structured data. Verify the intended domain in Search Console and submit the generated sitemap.
-
-Keep one preferred public website to avoid competing copies. No search-engine account, domain or DNS configuration is changed by running the build.
-
-## Validation
-
-Run `node scripts/build.mjs`, `node scripts/validate.mjs` and `python scripts/check-seo.py`. The search checks validate either production or staging mode, based on the configuration.
+Run `node scripts/build.mjs`, `node scripts/validate.mjs` and `python scripts/check-seo.py` to rebuild and validate. To exclude the site again, set `indexable` to false in content/seo.json and rebuild.
