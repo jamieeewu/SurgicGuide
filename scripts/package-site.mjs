@@ -5,7 +5,7 @@ const root=path.resolve(import.meta.dirname,'..');
 const output=path.join(root,'_site');
 fs.rmSync(output,{recursive:true,force:true});fs.mkdirSync(output);
 for(const entry of fs.readdirSync(root)) {
-  if(entry.endsWith('.html') || ['styles.css','site.js','robots.txt','sitemap.xml','feed.xml','CNAME','.nojekyll','assets','post','product','specialist','nonspecialist','team','contact','reference','references','blog'].includes(entry)) {
+  if(entry.endsWith('.html') || ['styles.css','site.js','robots.txt','sitemap.xml','feed.xml','CNAME','.nojekyll','assets','careers','post','product','specialist','nonspecialist','team','contact','reference','references','blog'].includes(entry)) {
     fs.cpSync(path.join(root,entry),path.join(output,entry),{recursive:true});
   }
 }

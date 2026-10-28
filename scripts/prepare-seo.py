@@ -33,6 +33,6 @@ for p in list((ROOT/'assets').rglob('*')):
                 info['sources'].append({'src':str(p.relative_to(ROOT)),'width':im.width})
             images[str(p.relative_to(ROOT))]=info
 articles={p.stem:changed(str(p.relative_to(ROOT))) for p in (ROOT/'content/posts').glob('*.json')}
-page=changed('content/site.json','content/seo.json','content/posts','scripts/build.mjs')
+page=changed('content/site.json','content/seo.json','content/careers.json','content/posts','scripts/build.mjs')
 (ROOT/'.build-seo.json').write_text(json.dumps({'images':images,'articles':articles,'pageModified':page}))
 print(f'Prepared {len(images)} image sizes and Git update dates')

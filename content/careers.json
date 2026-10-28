@@ -1,0 +1,45 @@
+{
+  "email": "hr@surgicguide.com",
+  "roles": [
+    {
+      "id": "research-scientist-flim",
+      "title": "Research Scientist, Fluorescence Imaging",
+      "department": "Research & Development",
+      "type": "Full-time",
+      "summary": "Develop the experimental foundations of fluorescence lifetime imaging and investigate how optical signals can reveal differences in tissue metabolism.",
+      "responsibilities": ["Design and conduct fluorescence lifetime and spectroscopy experiments using biological samples and reference standards.", "Analyse NAD(P)H fluorescence data and assess the reproducibility, sensitivity and limitations of experimental methods.", "Work with engineering and data science colleagues to translate research findings into imaging-system requirements.", "Maintain rigorous experimental records and communicate results through technical reports and research presentations."],
+      "requirements": ["A PhD in biophysics, biomedical sciences, optical engineering or a related discipline; equivalent research experience will also be considered.", "Hands-on experience with fluorescence microscopy, spectroscopy or time-resolved optical measurements.", "Confidence in quantitative analysis using Python, MATLAB or similar tools.", "Strong experimental judgement, clear technical writing and a collaborative approach."],
+      "desirable": "Experience with FLIM, TCSPC, tissue optics or cellular metabolism."
+    },
+    {
+      "id": "optical-systems-engineer",
+      "title": "Optical Systems Engineer",
+      "department": "Engineering",
+      "type": "Full-time",
+      "summary": "Bring optical, electronic and mechanical components together to develop reliable research prototypes for advanced biomedical imaging.",
+      "responsibilities": ["Design, assemble and characterise optical imaging and illumination subsystems.", "Develop test procedures for alignment, calibration, signal quality and system stability.", "Collaborate on detector integration, photon timing and hardware–software interfaces.", "Document design decisions, verification results and engineering changes to support reproducible development."],
+      "requirements": ["A degree in optical engineering, photonics, electrical engineering, physics or a related field.", "Practical experience building or testing optical instruments and working with laboratory equipment.", "An understanding of optical safety, measurement uncertainty and systematic troubleshooting.", "Ability to turn technical requirements into well-documented designs and test plans."],
+      "desirable": "Experience with lasers, fibre optics, SPAD detectors, TCSPC electronics or biomedical instrumentation."
+    },
+    {
+      "id": "machine-learning-engineer",
+      "title": "Machine Learning Engineer, Biomedical Imaging",
+      "department": "AI & Software",
+      "type": "Full-time",
+      "summary": "Develop robust analysis methods that turn complex fluorescence imaging data into interpretable research insights.",
+      "responsibilities": ["Build reproducible preprocessing, training and evaluation pipelines for imaging and fluorescence lifetime datasets.", "Develop and benchmark models for image classification, segmentation and quantitative analysis.", "Evaluate uncertainty, data leakage, dataset bias and generalisation across experimental conditions.", "Work with scientists and engineers to integrate research models into maintainable software prototypes."],
+      "requirements": ["A degree in computer science, engineering, applied mathematics or a related quantitative field.", "Strong Python skills and practical experience with PyTorch, TensorFlow or an equivalent framework.", "A sound understanding of machine-learning evaluation, statistics and reproducible experimentation.", "Experience with version control, software testing and communicating model limitations to multidisciplinary teams."],
+      "desirable": "Experience with biomedical imaging, explainable AI, GPU optimisation or real-time inference."
+    },
+    {
+      "id": "research-engineering-intern",
+      "title": "Research & Engineering Intern",
+      "department": "Early Careers",
+      "type": "Internship",
+      "summary": "Contribute to a defined research or engineering project while gaining practical experience at the intersection of imaging, computation and biomedical science.",
+      "responsibilities": ["Support experimental measurements, data preparation or prototype testing under the guidance of a project lead.", "Review relevant scientific literature and summarise findings for the team.", "Write clear, reproducible code or laboratory documentation appropriate to your project.", "Present your approach, results and recommendations at the end of the placement."],
+      "requirements": ["Currently studying, or recently graduated, in biomedical science, engineering, physics, computer science or a related discipline.", "Evidence of analytical thinking through coursework, laboratory work or personal projects.", "Basic experience with Python, MATLAB, laboratory methods or engineering tools relevant to your interests.", "Curiosity, attention to detail and a willingness to learn across disciplines."],
+      "desirable": "Include a relevant project, portfolio or research interest in your application."
+    }
+  ]
+}

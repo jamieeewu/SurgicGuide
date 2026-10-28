@@ -48,6 +48,11 @@
       "title": "FLIM Articles & Biotech Perspectives | SurgicGuide Journal",
       "description": "Read FLIM explainers, biotech perspectives and fictional company stories from SurgicGuide, an academic project on AI-assisted surgical imaging.",
       "label": "Journal"
+    },
+    "careers": {
+      "title": "Careers in Biomedical Imaging, AI & Engineering | SurgicGuide",
+      "description": "Explore research, optical engineering, machine learning and internship opportunities at SurgicGuide. View role requirements and apply by email with your CV.",
+      "label": "Careers"
     }
   },
   "indexable": true

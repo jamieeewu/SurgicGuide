@@ -6,7 +6,7 @@ const project = path.resolve(__dirname, '..');
 const site = JSON.parse(fs.readFileSync(path.join(project, 'content/site.json')));
 site.posts = fs.readdirSync(path.join(project,'content/posts')).filter(f=>f.endsWith('.json')).map(f=>({...JSON.parse(fs.readFileSync(path.join(project,'content/posts',f))),slug:f.slice(0,-5)})).filter(p=>p.published);
 const root = process.env.SITE_URL || `file://${project}/`;
-const pages = ['index.html','product.html','specialist.html','nonspecialist.html','team.html','contact.html','references.html','blog.html', ...site.posts.map(p => `post/${p.slug}.html`)];
+const pages = ['index.html','product.html','specialist.html','nonspecialist.html','team.html','careers.html','contact.html','references.html','blog.html', ...site.posts.map(p => `post/${p.slug}.html`)];
 const screenshots = process.env.SCREENSHOT_DIR;
 
 (async () => {
