@@ -554,3 +554,7 @@ html.figure-open { overflow: hidden; }
 .career-copy-status, .career-send-note { font-size: 13px; color: #516f85; }
 .career-copy-status:empty { display: none; }
 @media(max-width:600px) { .career-apply-panel { padding: 20px; } .career-description .career-email-actions .button, .career-copy-email { width: 100%; } }
+
+.career-role-links { display: flex; flex-wrap: wrap; gap: 10px; padding-block: 22px; border-bottom: 1px solid var(--line); }
+.career-role-links a { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 13px; background: white; border: 1px solid #b9cddd; border-radius: 6px; color: #274e65; text-decoration: none; font-size: 14px; line-height: 1.5; }
+.career-role-links a:hover { background: #eaf2ff; border-color: #8bacc8; }

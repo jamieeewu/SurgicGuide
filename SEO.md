@@ -23,3 +23,7 @@ Similar content on another public website can cause Google to choose that websit
 ## Verification
 
 Run python3 scripts/prepare-seo.py, node scripts/build.mjs, node scripts/validate.mjs, python3 scripts/check-seo.py, node scripts/posts.test.mjs and node scripts/package-site.mjs. The production workflow runs these checks before deploying; a failure preserves the last successful site.
+
+## Careers
+
+The Careers page uses a descriptive title and H1, a CollectionPage schema with an ItemList matching the visible role anchors, and internal links from navigation and the Team page. The sitemap and canonical URL include careers.html. JobPosting markup is intentionally absent: this academic site does not establish genuine vacancies with verified posting dates and workplace locations. Google Jobs eligibility would require genuine individual vacancy pages and complete, accurate employment details. Normal indexing remains enabled.

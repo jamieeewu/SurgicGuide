@@ -112,3 +112,18 @@ for el in (sitemap.findall('s:url', ns) if INDEXABLE else []):
         from datetime import datetime
         datetime.fromisoformat(el.findtext('s:lastmod',namespaces=ns).replace('Z','+00:00'))
 print('Article author, update dates and RSS checks passed.')
+
+career_url=ORIGIN+'/careers.html'
+career=Page((ROOT/'careers.html').read_text())
+if INDEXABLE:
+    graph=career.schemas[0]['@graph']
+    page_node=next(n for n in graph if n.get('@id')==career_url+'#webpage')
+    assert page_node['@type']=='CollectionPage'
+    roles=json.loads((ROOT/'content/careers.json').read_text())['roles']
+    listing=next(n for n in graph if n.get('@id')==career_url+'#opportunities')
+    assert listing['numberOfItems']==len(roles)
+    assert [n['url'] for n in listing['itemListElement']]==[career_url+'#'+r['id'] for r in roles]
+    assert not any(n['@type']=='JobPosting' for n in graph)
+    html=(ROOT/'careers.html').read_text()
+    for role in roles: assert 'id="'+role['id']+'"' in html
+print('Careers collection, role anchors and schema verified.')
