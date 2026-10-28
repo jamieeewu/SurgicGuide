@@ -512,10 +512,10 @@ html.figure-open { overflow: hidden; }
 .career-meta span { padding-inline: 8px; color: var(--muted); }
 .career-index { font: 400 13px/1.8 var(--heading); color: var(--muted); }
 .career-summary { margin-block: 17px; max-width: 690px; font-size: 16px; }
-.career-details summary { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding-block: 12px; min-height: 48px; color: var(--accent-dark); font-weight: 600; list-style: none; }
-.career-details summary::-webkit-details-marker { display: none; }
-.career-details summary span { font-size: 22px; font-weight: 400; transition: transform .15s; }
-.career-details[open] summary span { transform: rotate(45deg); }
+.career-details > summary { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding-block: 12px; min-height: 48px; color: var(--accent-dark); font-weight: 600; list-style: none; }
+.career-details > summary::-webkit-details-marker { display: none; }
+.career-details > summary span { font-size: 22px; font-weight: 400; transition: transform .15s; }
+.career-details[open] > summary span { transform: rotate(45deg); }
 .career-description { padding-top: 15px; }
 .career-description h4 { font-size: 18px; margin-top: 14px; }
 .career-description p { margin-top: 14px; }
@@ -534,3 +534,23 @@ html.figure-open { overflow: hidden; }
 @media (min-width: 861px) and (max-width: 1180px) { .header-inner { gap: 16px; } #header-navigation .nav-links { gap: 14px; } .header-inner .brand-subtitle { display: none; } .header-inner .brand { font-size: 17px; gap: 9px; } }
 @media (max-width: 860px) { .careers-overview, .careers-apply { gap: 32px; padding-block: 56px; } .careers-layout { grid-template-columns: 1fr; gap: 30px; } .careers-sidebar { max-width: 560px; } .careers-open { padding-block: 56px; } }
 @media (max-width: 600px) { .careers-overview, .careers-apply { grid-template-columns: 1fr; } .careers-open .section-header { display: block; } .careers-open .section-description { margin-top: 18px; } .career-role { padding-block: 25px; } .career-role-heading { gap: 12px; } .careers-application-note { padding: 25px; } }
+
+/* Application options remain usable without a configured desktop email handler. */
+.career-application { margin-top: 26px; }
+.career-description .career-apply-toggle, .career-description a.button { background: #274e65; border-color: #274e65; color: #fff; text-decoration: none; }
+.career-description .career-apply-toggle { display: inline-flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 52px; padding: 13px 22px; margin-top: 0; border-radius: 8px; list-style: none; cursor: pointer; font-size: 15px; }
+.career-apply-toggle::-webkit-details-marker { display: none; }
+.career-description .career-apply-toggle:hover, .career-description a.button:hover { background: #1d3e55; border-color: #1d3e55; }
+.career-application[open] .career-apply-toggle { background: #e3edf8; border-color: #a9c2d9; color: #274e65; }
+.career-apply-panel { margin-top: 18px; padding: 26px; background: #fff; border: 1px solid #cadbea; border-radius: 12px; }
+.career-apply-panel h4 { margin: 0; }
+.career-apply-panel label { display: block; margin-top: 18px; font-size: 14px; font-weight: 600; color: #435b6d; }
+.career-apply-panel input { margin-top: 6px; background: #f5f8fd; font-weight: 400; }
+.career-email-actions { display: flex; align-items: center; gap: 14px 22px; flex-wrap: wrap; margin-top: 22px; }
+.career-description .career-email-actions .button { margin: 0; font-size: 14px; }
+.career-webmail { padding-block: 10px; font-size: 15px; }
+.career-copy-email { min-height: 44px; background: transparent; border: 1px solid #b9cddd; border-radius: 6px; padding: 8px 12px; color: #274e65; font-size: 14px; }
+.career-copy-email:hover { background: #eaf2ff; }
+.career-copy-status, .career-send-note { font-size: 13px; color: #516f85; }
+.career-copy-status:empty { display: none; }
+@media(max-width:600px) { .career-apply-panel { padding: 20px; } .career-description .career-email-actions .button, .career-copy-email { width: 100%; } }

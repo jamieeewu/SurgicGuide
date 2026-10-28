@@ -73,3 +73,20 @@ if (figureDialog?.showModal) {
     figureTrigger?.focus({preventScroll:true});
   });
 }
+
+// Copying is an optional enhancement; readonly fields always allow manual copying.
+document.querySelectorAll('.career-copy-email').forEach(button => {
+  button.addEventListener('click', async () => {
+    const panel = button.closest('.career-apply-panel');
+    const input = panel.querySelector('.application-email');
+    const status = panel.querySelector('.career-copy-status');
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+      await navigator.clipboard.writeText(input.value);
+      status.textContent = 'Email address copied. Paste it into your email service and attach your CV.';
+    } catch {
+      input.focus(); input.select(); input.setSelectionRange(0,input.value.length);
+      status.textContent = 'Select Copy from your browser or device menu to copy the highlighted email address.';
+    }
+  });
+});
